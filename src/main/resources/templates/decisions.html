@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <title>Decisions</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Decisions</h1>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <span data-feather="filter" class="me-1"></span>Filters
+            </h5>
+        </div>
+        <div class="card-body">
+            <form class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="statusFilter" class="form-label">Status</label>
+                    <select id="statusFilter" class="form-select" th:disabled="${isReadOnly}">
+                        <option selected>All</option>
+                        <option>PENDING</option>
+                        <option>APPROVED</option>
+                        <option>REJECTED</option>
+                        <option>ESCALATED</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="riskLevelFilter" class="form-label">Risk Level</label>
+                    <select id="riskLevelFilter" class="form-select" th:disabled="${isReadOnly}">
+                        <option selected>All</option>
+                        <option>LOW</option>
+                        <option>MEDIUM</option>
+                        <option>HIGH</option>
+                        <option>CRITICAL</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="actorFilter" class="form-label">Actor</label>
+                    <input type="text" id="actorFilter" class="form-control" placeholder="Filter by actor..." th:attr="readonly=${isReadOnly}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100" th:disabled="${isReadOnly}" sec:authorize="!hasRole('ROLE_READ_ONLY')">Apply</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Decisions Table -->
+    <h4>All Decisions</h4>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+            <tr>
+                <th>Decision ID</th>
+                <th>Status</th>
+                <th>Risk Level</th>
+                <th>Actor</th>
+                <th>Created At</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="decision : ${decisions}">
+                <td th:text="${decision.decisionId}"></td>
+                <td>
+                    <span th:text="${decision.status}"
+                          th:classappend="${decision.status == 'PENDING' ? 'bg-warning text-dark' :
+                                         (decision.status == 'APPROVED' ? 'bg-success' :
+                                         (decision.status == 'REJECTED' ? 'bg-danger' : 'bg-info'))}"
+                          class="badge"></span>
+                </td>
+                <td>
+                    <span th:text="${decision.riskLevel}"
+                          th:classappend="${decision.riskLevel == 'CRITICAL' ? 'badge-risk-high' :
+                                         (decision.riskLevel == 'HIGH' ? 'badge-risk-high' :
+                                         (decision.riskLevel == 'MEDIUM' ? 'badge-risk-medium' : 'badge-risk-low'))}"
+                          class="badge"></span>
+                </td>
+                <td th:text="${decision.actor}"></td>
+                <td th:text="${#temporals.format(decision.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                <td>
+                    <a th:href="@{/decisions/{id}(id=${decision.decisionId})}" class="btn btn-sm btn-info">View</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

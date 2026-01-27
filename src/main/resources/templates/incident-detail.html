@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="https://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout}">
+<head>
+    <title>Incident Detail</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Incident Detail: <span th:text="${incidentId}">INC-001</span></h1>
+    </div>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Transaction Details -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><span data-feather="file-text" class="me-1"></span>Transaction Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Amount:</strong> <span th:text="${incident.transactionDetails.amount}"></span></p>
+                            <p><strong>Currency:</strong> <span th:text="${incident.transactionDetails.currency}"></span></p>
+                            <p><strong>Type:</strong> <span th:text="${incident.transactionDetails.transactionType}"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Location:</strong> <span th:text="${incident.transactionDetails.location}"></span></p>
+                            <p><strong>Timestamp:</strong> <span th:text="${#temporals.format(incident.transactionDetails.timestamp, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Risk Profile Snapshot -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><span data-feather="user" class="me-1"></span>Account Snapshot</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Risk Level:</strong> <span th:text="${incident.accountSnapshot.riskLevel}" th:classappend="${incident.accountSnapshot.riskLevel == 'RESTRICTED' ? 'badge-risk-restricted' : (incident.accountSnapshot.riskLevel == 'HIGH' ? 'badge-risk-high' : (incident.accountSnapshot.riskLevel == 'MEDIUM' ? 'badge-risk-medium' : 'badge-risk-low'))}" class="badge"></span></p>
+                            <p><strong>Average Amount:</strong> <span th:text="${incident.accountSnapshot.averageAmount}"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Usual Location:</strong> <span th:text="${incident.accountSnapshot.usualLocation}"></span></p>
+                            <p><strong>Previous Incidents:</strong> <span th:text="${incident.accountSnapshot.previousIncidents}"></span></p>
+                        </div>
+                     <a th:href="@{/accounts/{id}(id=${incident.accountSnapshot.accountId})}" class="btn btn-sm btn-outline-primary mt-2">View Full Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Incident Summary -->
+            <div id="incident-summary-card" class="card mb-4 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><span data-feather="info" class="me-1"></span>Summary</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Incident ID:</strong> <span th:text="${incident.incidentId}"></span></p>
+                    <p><strong>Risk Score:</strong> <span th:text="${incident.riskScore}" th:classappend="${incident.riskScore >= 80 ? 'badge-risk-high' : (incident.riskScore >= 50 ? 'badge-risk-medium' : 'badge-risk-low')}" class="badge"></span></p>
+                    <p><strong>Status:</strong> <span id="incident-status-badge" th:text="${incident.status}" th:classappend="${incident.status == 'OPEN' ? 'bg-primary' : (incident.status == 'CONFIRMED_FRAUD' ? 'bg-danger' : (incident.status == 'FALSE_POSITIVE' ? 'bg-success' : 'bg-info text-dark'))}" class="badge"></span></p>
+                    <hr>
+                    <p><strong>Decision Reason:</strong> <span th:text="${incident.decisionReason}"></span></p>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><span data-feather="activity" class="me-1"></span>Actions</h5>
+                </div>
+                <div class="card-body">
+                    <p>Change incident status:</p>
+                    <div class="d-grid gap-2">
+                        <!-- 
+                          HTMX will post to these (mock) endpoints.
+                          The backend should return a new status badge.
+                          hx-target="#incident-status-badge" replaces the badge content.
+                          hx-swap="outerHTML" replaces the entire <span> tag.
+                        -->
+                        <button class="btn btn-danger"
+                                hx-post="@{/api/incidents/{id}/confirm-fraud(id=${incidentId})}"
+                                hx-target="#incident-status-badge" hx-swap="outerHTML"
+                                th:disabled="${isReadOnly}"
+                                sec:authorize="!hasRole('ROLE_READ_ONLY')">
+                            Confirm Fraud
+                        </button>
+                        <button class="btn btn-warning"
+                                hx-post="@{/api/incidents/{id}/false-positive(id=${incidentId})}"
+                                hx-target="#incident-status-badge" hx-swap="outerHTML"
+                                th:disabled="${isReadOnly}"
+                                sec:authorize="!hasRole('ROLE_READ_ONLY')">
+                            Mark as False Positive
+                        </button>
+                        <button class="btn btn-success"
+                                hx-post="@{/api/incidents/{id}/close(id=${incidentId})}"
+                                hx-target="#incident-status-badge" hx-swap="outerHTML"
+                                th:disabled="${isReadOnly}"
+                                sec:authorize="!hasRole('ROLE_READ_ONLY')">
+                            Close Incident
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

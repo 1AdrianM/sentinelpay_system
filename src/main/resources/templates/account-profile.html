@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Account Profile</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Account Profile: <span th:text="${accountId}">ACC-101</span></h1>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <!-- Account Summary Card -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><span data-feather="user-check" class="me-1"></span>Account Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p><strong>Account ID:</strong></p>
+                            <p th:text="${accountId}">ACC-101</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Risk Level:</strong></p>
+                            <p><span th:text="${riskProfile.riskLevel}" th:classappend="${riskProfile.riskLevel == 'RESTRICTED' ? 'badge-risk-restricted' : (riskProfile.riskLevel == 'HIGH' ? 'badge-risk-high' : (riskProfile.riskLevel == 'MEDIUM' ? 'badge-risk-medium' : 'badge-risk-low'))}" class="badge"></span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Average Risk Score:</strong></p>
+                            <p th:text="${riskProfile.averageRiskScore}"></p>
+                        </div>
+                    </div>
+                    <hr>
+                    <p><strong>Transaction Behavior Summary:</strong></p>
+                    <p th:text="${riskProfile.transactionBehaviorSummary}"></p>
+                </div>
+            </div>
+
+            <!-- Incident History Card -->
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><span data-feather="archive" class="me-1"></span>Incident History</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>Incident ID</th>
+                                <th>Status</th>
+                                <th>Risk Score</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+            <tr th:each="incident : ${riskProfile.incidentHistory}">
+                <td th:text="${incident.incidentId}"></td>
+                <td><span th:text="${incident.status}" th:classappend="${incident.status == 'OPEN' ? 'bg-primary' : (incident.status == 'CONFIRMED_FRAUD' ? 'bg-danger' : (incident.status == 'FALSE_POSITIVE' ? 'bg-success' : 'bg-info text-dark'))}" class="badge"></span></td>
+                <td><span th:text="${incident.riskScore}" th:classappend="${incident.riskScore >= 80 ? 'badge-risk-high' : (incident.riskScore >= 50 ? 'badge-risk-medium' : 'badge-risk-low')}" class="badge"></span></td>
+                <td th:text="${#temporals.format(incident.date, 'dd/MM/yyyy')}"></td>
+                <td><a th:href="@{/incidents/{id}(id=${incident.incidentId})}" class="btn btn-sm btn-outline-primary">View</a></td>
+            </tr>
+            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

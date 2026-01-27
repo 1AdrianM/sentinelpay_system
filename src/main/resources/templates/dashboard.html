@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Dashboard</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary"
+                        th:disabled="${isReadOnly}"
+                        sec:authorize="!hasRole('ROLE_READ_ONLY')">Share</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary"
+                        th:disabled="${isReadOnly}"
+                        sec:authorize="!hasRole('ROLE_READ_ONLY')">Export</button>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                    th:disabled="${isReadOnly}"
+                    sec:authorize="!hasRole('ROLE_READ_ONLY')">
+                <span data-feather="calendar"></span>
+                This week
+            </button>
+        </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-muted">Total Transactions (Today)</h5>
+                            <p th:text="${dashboard.totalTxPerDay}" class="card-text fs-4 fw-bold"></p>
+                        </div>
+                        <span data-feather="dollar-sign" class="text-muted" style="width:32px;height:32px;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-muted">Open Incidents</h5>
+                            <p th:text="${dashboard.openIncidents}" class="card-text fs-4 fw-bold"></p>
+                        </div>
+                        <span data-feather="alert-circle" class="text-warning" style="width:32px;height:32px;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-muted">Confirmed Fraud</h5>
+                            <p th:text="${dashboard.confirmedFrauds}" class="card-text fs-4 fw-bold"></p>
+                        </div>
+                        <span data-feather="x-octagon" class="text-danger" style="width:32px;height:32px;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-muted">High/Restricted Accounts</h5>
+                            <p th:text="${dashboard.highRestrictedAccounts}" class="card-text fs-4 fw-bold"></p>
+                        </div>
+                        <span data-feather="user-x" class="badge bg-danger" style="width:32px;height:32px;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Central Section -->
+        <div class="col-md-8">
+            <h4 class="mb-3">Open Fraud Incidents</h4>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Incident ID</th>
+                        <th>Account ID</th>
+                        <th>Risk Score</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Mock Data Row 1 -->
+                    <tr th:each="fraud: ${dashboard.openFraudDtoList}">
+                        <td th:text="${fraud.incidentId}"></td>
+                        <td th:text="${fraud.accountId}"></td>
+                        <td ><span th:text="${fraud.riskScore}" class="badge badge-risk-high"></span></td>
+                        <td ><span th:text="${fraud.status}" class="badge bg-primary"></span></td>
+                        <td  th:text="${#temporals.format(fraud.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td><a th:href="@{/incidents/{id}(id=${fraud.incidentId})}" class="btn btn-sm btn-primary">Review</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Side Section -->
+        <div class="col-md-4">
+            <h4 class="mb-3">Top 5 Risky Accounts</h4>
+            <ul th:each="profile: ${dashboard.toFiveRiskProfileDtoList}" class="list-group mb-4 shadow-sm">
+                <li th:text="${profile.riskProfileId}" class="list-group-item d-flex justify-content-between align-items-center">
+
+                    <span th:text="${profile.riskLevel}" class="badge badge-risk-restricted rounded-pill"></span>
+                </li>
+            </ul>
+
+            <h4 class="mb-3">Last Fraud Decisions</h4>
+            <div th:each="decision : ${dashboard.latestFraudDecisionList}" class="list-group shadow-sm">
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <!-- Mostrar ID y tipo de decisión -->
+                        <h6 class="mb-1" th:text="${decision.decisionId + ' | ' + decision.decisionType}"></h6>
+
+                        <!-- Mostrar fecha formateada -->
+                        <small th:text="${#temporals.format(decision.createdAt, 'dd/MM/yyyy HH:mm')}"></small>
+                    </div>
+                    <!-- Mostrar cuenta -->
+                    <small th:text="'Account: ' + ${decision.accountId}"></small>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

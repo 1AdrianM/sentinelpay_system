@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="https://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout}">
+<head>
+    <title>Fraud Incidents</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Fraud Incidents</h1>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <span data-feather="filter" class="me-1"></span>Filters
+            </h5>
+        </div>
+        <div class="card-body">
+            <form class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="statusFilter" class="form-label">Status</label>
+                    <select id="statusFilter" class="form-select" th:disabled="${isReadOnly}">
+                        <option selected>All</option>
+                        <option>OPEN</option>
+                        <option>UNDER_REVIEW</option>
+                        <option>CONFIRMED_FRAUD</option>
+                        <option>FALSE_POSITIVE</option>
+                        <option>RESOLVED</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="riskLevelFilter" class="form-label">Risk Level</label>
+                    <select id="riskLevelFilter" class="form-select" th:disabled="${isReadOnly}">
+                        <option selected>All</option>
+                        <option>LOW</option>
+                        <option>MEDIUM</option>
+                        <option>HIGH</option>
+                        <option>RESTRICTED</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="dateRangeFilter" class="form-label">Date Range</label>
+                    <input type="text" id="dateRangeFilter" class="form-control" placeholder="Select date..." th:attr="readonly=${isReadOnly}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100" th:disabled="${isReadOnly}" sec:authorize="!hasRole('ROLE_READ_ONLY')">Apply</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Incidents Table -->
+    <h4>All Incidents</h4>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+            <tr>
+                <th>Incident ID</th>
+                <th>Account ID</th>
+                <th>Transaction ID</th>
+                <th>Risk Score</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="incident : ${incidents}">
+                <td th:text="${incident.incidentId}"></td>
+                <td th:text="${incident.accountId}"></td>
+                <td th:text="${incident.transactionId}"></td>
+                <td><span th:text="${incident.riskScore}" th:classappend="${incident.riskScore >= 80 ? 'badge-risk-high' : (incident.riskScore >= 50 ? 'badge-risk-medium' : 'badge-risk-low')}" class="badge"></span></td>
+                <td><span th:text="${incident.status}" th:classappend="${incident.status == 'OPEN' ? 'bg-primary' : (incident.status == 'CONFIRMED_FRAUD' ? 'bg-danger' : (incident.status == 'FALSE_POSITIVE' ? 'bg-success' : 'bg-info text-dark'))}" class="badge"></span></td>
+                <td th:text="${#temporals.format(incident.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                <td><a th:href="@{/incidents/{id}(id=${incident.incidentId})}" class="btn btn-sm btn-info">View</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

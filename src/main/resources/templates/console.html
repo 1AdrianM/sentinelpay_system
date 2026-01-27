@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Transaction Console</title>
+    <style>
+        .json-editor {
+            font-family: monospace;
+            height: 400px;
+        }
+        #response-container {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Transaction Console</h1>
+    </div>
+
+    <div class="row g-4">
+        <!-- Request Section -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <span data-feather="arrow-right-circle" class="me-1"></span>Request
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <span class="badge bg-primary me-2">POST</span>
+                        <code class="fs-6">/api/transactions/evaluate</code>
+                    </div>
+                    <form id="transaction-form">
+                        <div class="mb-3">
+                            <label for="json-payload" class="form-label">JSON Payload</label>
+                            <textarea id="json-payload" name="jsonPayload" class="form-control json-editor" th:text="${sampleJson}"></textarea>
+                        </div>
+                        <button type="button"
+                                class="btn btn-primary w-100"
+                                hx-post="/transactions/evaluate"
+                                hx-include="#json-payload"
+                                hx-target="#response-container"
+                                hx-swap="innerHTML"
+                                hx-headers='{"Content-Type":"application/json"}'>
+                            Send Transaction
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Response Section -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <span data-feather="arrow-left-circle" class="me-1"></span>Response
+                    </h5>
+                </div>
+                <div id="response-container" class="card-body">
+                    <div class="text-center text-muted p-5">
+                        <p>Response will appear here after sending a transaction.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--/*
+This fragment displays the result of a transaction evaluation.
+It's designed to be returned from an HTMX call and inserted into the UI.
+*/-->
+<div th:fragment="response-card" class="p-3">
+    <div th:if="${response != null}">
+        <!-- Main Decision -->
+        <div class="mb-3">
+            <h6 class="text-muted">Fraud Decision</h6>
+            <span th:text="${response.fraudDecision}"
+                  th:classappend="${response.fraudDecision == 'APPROVED' ? 'bg-success' : (response.fraudDecision == 'REVIEW' ? 'bg-warning' : 'bg-danger')}"
+                  class="badge fs-6">
+            </span>
+        </div>
+
+        <!-- Global Score -->
+        <div class="mb-3">
+            <h6 class="text-muted">Global Risk Score</h6>
+            <span th:text="${response.globalRiskScore}"
+                  th:classappend="${response.globalRiskScore >= 80 ? 'badge-risk-high' : (response.globalRiskScore >= 50 ? 'badge-risk-medium' : 'badge-risk-low')}"
+                  class="badge fs-6">
+            </span>
+        </div>
+
+        <!-- Incident ID -->
+        <div class="mb-3" th:if="${response.incidentId != null}">
+            <h6 class="text-muted">Incident Created</h6>
+            <a href="#" th:href="@{/incidents/{id}(id=${response.incidentId})}" th:text="${response.incidentId}"></a>
+        </div>
+        
+        <hr>
+
+        <!-- Profile Breakdown -->
+        <h6 class="text-muted mb-2">Profile Breakdown</h6>
+        <div class="accordion" id="profileAccordion">
+            <div th:each="profile, iterStat : ${response.profileBreakdown}" class="accordion-item">
+                <h2 class="accordion-header" th:id="'heading' + ${iterStat.index}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            th:data-bs-target="'#collapse' + ${iterStat.index}" aria-expanded="false"
+                            th:aria-controls="'collapse' + ${iterStat.index}">
+                        <span th:text="${profile.profileName}" class="fw-bold me-2"></span>
+                        <span th:text="${profile.riskScore}"
+                              th:classappend="${profile.riskScore >= 80 ? 'badge-risk-high' : (profile.riskScore >= 50 ? 'badge-risk-medium' : 'badge-risk-low')}"
+                              class="badge ms-auto me-2">
+                        </span>
+                    </button>
+                </h2>
+                <div th:id="'collapse' + ${iterStat.index}" class="accordion-collapse collapse"
+                     th:aria-labelledby="'heading' + ${iterStat.index}" data-bs-parent="#profileAccordion">
+                    <div class="accordion-body">
+                        <p><strong>Decision:</strong> <span th:text="${profile.decision}"></span></p>
+                        <div th:if="${!#lists.isEmpty(profile.rulesFired)}">
+                            <strong>Rules Fired:</strong>
+                            <ul>
+                                <li th:each="rule : ${profile.rulesFired}" th:text="${rule}"></li>
+                            </ul>
+                        </div>
+                        <div th:if="${#lists.isEmpty(profile.rulesFired)}">
+                            <p>No specific rules fired.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div th:if="${response == null}" class="text-center text-danger p-5">
+        <p>An error occurred or the response was empty.</p>
+    </div>
+</div>
+
+</body>
+</html>

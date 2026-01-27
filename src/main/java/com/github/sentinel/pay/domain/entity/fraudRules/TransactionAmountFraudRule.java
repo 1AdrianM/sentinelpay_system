@@ -1,9 +1,8 @@
 package com.github.sentinel.pay.domain.entity.fraudRules;
 
-import com.github.sentinel.pay.domain.entity.AccountRiskProfileAggregate.AccountRiskProfile;
-import com.github.sentinel.pay.domain.entity.FraudIncidentAggregate.RiskScore;
-import com.github.sentinel.pay.domain.entity.fraudRules.FraudRule;
-import com.github.sentinel.pay.domain.entity.transactionAggregate.Transaction;
+import com.github.sentinel.pay.domain.entity.accountRiskProfile.AccountRiskProfile;
+import com.github.sentinel.pay.domain.entity.risk.RiskContribution;
+import com.github.sentinel.pay.domain.entity.transaction.Transaction;
 
 /**
  *
@@ -15,8 +14,13 @@ public record TransactionAmountFraudRule() implements FraudRule {
      * @param accountRiskProfile
      * @return
      */
+    //
     @Override
     public RiskContribution evaluateTransaction(Transaction tx, AccountRiskProfile accountRiskProfile) {
-        return null;
+   if( accountRiskProfile.getMonetaryProfile().isAnomalous(tx.getMoney().amount())){
+            return RiskContribution.HIGH;
+        }
+        return  RiskContribution.NONE;
     }
 }
+

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Fragments</title>
+</head>
+<body>
+!-- fragments/api-key-item.html -->
+<div th:fragment="api-key-item" class="card mb-3 api-key-item" th:id="'key-' + ${key.id}">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0" th:text="${key.nameKey}">Production Key</h6>
+            <button type="button" class="btn btn-danger btn-sm"
+                    th:hx-delete="@{'/settings/api-keys/' + ${key.id}}"
+                    hx-target="closest .api-key-item"
+                    hx-swap="outerHTML swap:1s"
+                    hx-confirm="Are you sure you want to delete this API key? This action cannot be undone.">
+                <i class="bi bi-trash"></i> Delete
+            </button>
+        </div>
+        <div class="input-group mb-2">
+            <input type="text" class="form-control api-key-value"
+                   th:value="${key.maskedValue}" readonly>
+            <button class="btn btn-outline-secondary" type="button"
+                    th:onclick="'copyKey(\''+${key.value}+'\')'">
+                <i class="bi bi-clipboard"></i> Copy
+            </button>
+        </div>
+        <small class="text-muted">
+            Created: <span th:text="${#temporals.format(key.createdAt, 'MMM dd, yyyy')}">Jan 15, 2026</span>
+        </small>
+    </div>
+</div>
+
+</body>
+</html>
