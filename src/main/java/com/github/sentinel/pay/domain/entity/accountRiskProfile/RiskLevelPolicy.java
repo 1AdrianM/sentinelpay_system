@@ -8,18 +8,26 @@ import org.springframework.stereotype.Component;
 public class RiskLevelPolicy {
 
             public RiskLevel evaluate(AccountRiskProfile profile) {
+                long confirmedFrauds=0;
+                long underReview=0;
 
-                long confirmedFrauds = profile.getIncidents().status()
-                        .stream()
-                        .filter(i -> i == FraudIncidentStatus.CONFIRMED_FRAUD)
-                        .count();
+                      if(profile.getIncidents()!=null){
+                          confirmedFrauds = profile.getIncidents().status()
+                                  .stream()
+                                  .filter(i -> i == FraudIncidentStatus.CONFIRMED_FRAUD)
+                                  .count();
 
-                long underReview = profile.getIncidents().status()
-                        .stream()
-                        .filter(i -> i == FraudIncidentStatus.UNDER_REVIEW)
-                        .count();
+                          underReview = profile.getIncidents().status()
+                                  .stream()
+                                  .filter(i -> i == FraudIncidentStatus.UNDER_REVIEW)
+                                  .count();
+                      }
 
-                double avgScore = profile.getAverageRiskScore();
+                double avgScore=0;
+                if(profile.getAverageRiskScore()!=0) {
+                    avgScore = profile.getAverageRiskScore();
+                }
+
 
                 if (confirmedFrauds >= 2) {
                     return RiskLevel.RESTRICTED;

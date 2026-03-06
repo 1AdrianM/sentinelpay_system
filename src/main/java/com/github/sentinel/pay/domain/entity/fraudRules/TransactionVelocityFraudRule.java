@@ -1,7 +1,9 @@
 package com.github.sentinel.pay.domain.entity.fraudRules;
 
 import com.github.sentinel.pay.domain.entity.accountRiskProfile.AccountRiskProfile;
-import com.github.sentinel.pay.domain.entity.risk.RiskContribution;
+import com.github.sentinel.pay.domain.entity.risk.FraudSignal;
+import com.github.sentinel.pay.domain.entity.risk.RiskImpactScale;
+import com.github.sentinel.pay.domain.entity.risk.RiskMagnitude;
 import com.github.sentinel.pay.domain.entity.transaction.Transaction;
 
 public record TransactionVelocityFraudRule() implements FraudRule {
@@ -9,19 +11,18 @@ public record TransactionVelocityFraudRule() implements FraudRule {
     private static final int SUSPICIOUS_INTERVAL_MS = 5000; // 5 segundos
     private static final int WARNING_INTERVAL_MS = 30000;   // 30 segundos
     private static final int MAX_TRANSACTIONS_PER_MINUTE = 10;
-
-
     /**
      * @param tx
      * @param accountRiskProfile
      * @return
      */
+
     @Override
-    public RiskContribution evaluateTransaction(Transaction tx, AccountRiskProfile accountRiskProfile) {
+    public FraudSignal evaluateTransaction(Transaction tx, AccountRiskProfile accountRiskProfile) {
       if(accountRiskProfile.getVelocityProfile().isBursting()) {
-        return RiskContribution.HIGH;
+        return FraudSignal.of(RiskMagnitude.HIGH, RiskImpactScale.SIGNIFICANT,"TransactionVelocityRule","Transaction too much quick");
       }
-      return RiskContribution.NONE;
+      return FraudSignal.of(RiskMagnitude.NEGLIGIBLE, RiskImpactScale.REDUCED, "TransactionVelocityRule", "Transaction in the estipulated time");
       }
 
 }

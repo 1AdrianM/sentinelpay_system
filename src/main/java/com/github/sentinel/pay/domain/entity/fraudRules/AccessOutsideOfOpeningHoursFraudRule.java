@@ -1,14 +1,14 @@
 package com.github.sentinel.pay.domain.entity.fraudRules;
 
 import com.github.sentinel.pay.domain.entity.accountRiskProfile.AccountRiskProfile;
-import com.github.sentinel.pay.domain.entity.risk.RiskContribution;
+import com.github.sentinel.pay.domain.entity.risk.FraudSignal;
 import com.github.sentinel.pay.domain.entity.transaction.Transaction;
 
 public record AccessOutsideOfOpeningHoursFraudRule() implements FraudRule {
 
 
     @Override
-    public RiskContribution evaluateTransaction(Transaction tx, AccountRiskProfile accountRiskProfile) {
+    public FraudSignal evaluateTransaction(Transaction tx, AccountRiskProfile accountRiskProfile) {
        //primero filtramos si son transaction de transferencia externa o internacional, luego validamos la hora de la transaction si esta fuera del rango la anotamos como High risk
 
 

@@ -2,61 +2,235 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<div th:fragment="sidebar" class="position-sticky pt-3">
-    <ul class="nav flex-column">
+<div th:fragment="sidebar" class="sidebar-wrapper">
+    <style>
+        .sidebar-wrapper {
+            background-color: #0f1115;
+            height: 100vh;
+            width: 100%;
+            color: #94a3b8;
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #1e293b;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 0.5rem 2.5rem 0.5rem;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .brand-icon {
+            background-color: #10b981;
+            color: #000;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+        }
+
+        .nav-sidebar {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .nav-sidebar .nav-item {
+            margin-bottom: 4px;
+        }
+
+        .nav-sidebar .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.7rem 1rem;
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-sidebar .nav-link:hover {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .nav-sidebar .nav-link.active {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .nav-sidebar .nav-link svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .sidebar-heading {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #475569;
+            padding: 1.5rem 1rem 0.5rem;
+            font-weight: 800;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 1.5rem;
+            border-top: 1px solid #1e293b;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.5rem 1rem 1rem 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f1f5f9;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 2px solid #334155;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .user-name {
+            color: #f1f5f9;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role {
+            color: #64748b;
+            font-size: 0.75rem;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.75rem 1rem;
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(244, 63, 94, 0.1);
+            color: #fb7185;
+        }
+    </style>
+
+    <div class="sidebar-brand">
+        <div class="brand-icon">S</div>
+        <span>SpringUI Pro</span>
+    </div>
+
+    <ul class="nav-sidebar">
         <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/dashboard">
-                <span data-feather="home"></span>
+            <a class="nav-link active" href="/dashboard">
+                <i data-feather="grid"></i>
                 Dashboard
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="/incidents">
-                <span data-feather="file-text"></span>
+                <i data-feather="alert-circle"></i>
                 Incidents
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="/console">
-                <span data-feather="terminal"></span>
+                <i data-feather="terminal"></i>
                 Transaction Console
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/decisions"> <!-- Example link -->
-                <span data-feather="users"></span>
-                Decision
+            <a class="nav-link" href="/decisions">
+                <i data-feather="shield"></i>
+                Decisions
             </a>
         </li>
         <li class="nav-item">
-        <a class="nav-link" href="/settings"> <!-- Example link -->
-            <span data-feather="settings"></span>
-            Settings
-        </a>
+            <a class="nav-link" href="/settings">
+                <i data-feather="settings"></i>
+                Profile Settings
+            </a>
         </li>
-    </ul>
+        <li class="nav-item">
+            <a class="nav-link" href="/settings/api-keys">
+                <i data-feather="key"></i>
+                API Keys
+            </a>
+        </li>
 
-    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-        <span>Saved Reports (disabled)</span>
-        <a class="link-secondary" href="#" aria-label="Add a new report">
-            <span data-feather="plus-circle"></span>
-        </a>
-    </h6>
-    <ul class="nav flex-column mb-2">
+        <li class="sidebar-heading">Reports</li>
+
         <li class="nav-item">
             <a class="nav-link" href="#">
-                <span data-feather="file-text"></span>
+                <i data-feather="bar-chart-2"></i>
                 Current month
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="#">
-                <span data-feather="file-text"></span>
-                Last quarter
+                <i data-feather="archive"></i>
+                Historical Data
             </a>
         </li>
     </ul>
+
+    <div class="sidebar-footer">
+        <div class="user-profile">
+            <div class="user-avatar">JD</div>
+            <div class="user-info">
+                <span class="user-name">John Doe</span>
+                <span class="user-role">Administrator</span>
+            </div>
+        </div>
+
+        <a class="logout-btn" href="/logout">
+            <i data-feather="log-out"></i>
+            Logout
+        </a>
+    </div>
 </div>
+
+<script>
+    feather.replace();
+</script>
 
 </body>
 </html>

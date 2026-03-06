@@ -1,7 +1,9 @@
 package com.github.sentinel.pay.domain.entity.fraudRules;
 
 import com.github.sentinel.pay.domain.entity.accountRiskProfile.AccountRiskProfile;
-import com.github.sentinel.pay.domain.entity.risk.RiskContribution;
+import com.github.sentinel.pay.domain.entity.risk.FraudSignal;
+import com.github.sentinel.pay.domain.entity.risk.RiskImpactScale;
+import com.github.sentinel.pay.domain.entity.risk.RiskMagnitude;
 import com.github.sentinel.pay.domain.entity.transaction.Transaction;
 
 /**
@@ -16,11 +18,11 @@ public record TransactionAmountFraudRule() implements FraudRule {
      */
     //
     @Override
-    public RiskContribution evaluateTransaction(Transaction tx, AccountRiskProfile accountRiskProfile) {
+    public FraudSignal evaluateTransaction(Transaction tx, AccountRiskProfile accountRiskProfile) {
    if( accountRiskProfile.getMonetaryProfile().isAnomalous(tx.getMoney().amount())){
-            return RiskContribution.HIGH;
+            return FraudSignal.of(RiskMagnitude.CRITICAL, RiskImpactScale.SIGNIFICANT,"TransactionAmountRule","Transaction Amount is thrice the usual amount ");
         }
-        return  RiskContribution.NONE;
+        return  FraudSignal.of(RiskMagnitude.NEGLIGIBLE,RiskImpactScale.REDUCED,"TransactionAmountRule","Transaction amount is usual amount");
     }
 }
 

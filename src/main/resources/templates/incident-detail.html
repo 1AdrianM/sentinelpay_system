@@ -1,113 +1,125 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="https://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
 <head>
-    <title>Incident Detail</title>
+    <title>Sentinel Pay - Decisions</title>
 </head>
 <body>
 
-<div layout:fragment="content">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Incident Detail: <span th:text="${incidentId}">INC-001</span></h1>
+<div layout:fragment="content" class="p-4">
+
+    <div class="dashboard-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Decision Engine</h1>
+                <p class="dashboard-subtitle">Review, filter, and audit transaction resolutions</p>
+            </div>
+            <button class="btn-secondary" sec:authorize="hasRole('ROLE_ADMIN')">
+                <i class="bi bi-download me-2"></i>Export History
+            </button>
+        </div>
     </div>
 
-    <div class="row">
-        <!-- Main Content -->
-        <div class="col-lg-8">
-            <!-- Transaction Details -->
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0"><span data-feather="file-text" class="me-1"></span>Transaction Details</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>Amount:</strong> <span th:text="${incident.transactionDetails.amount}"></span></p>
-                            <p><strong>Currency:</strong> <span th:text="${incident.transactionDetails.currency}"></span></p>
-                            <p><strong>Type:</strong> <span th:text="${incident.transactionDetails.transactionType}"></span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Location:</strong> <span th:text="${incident.transactionDetails.location}"></span></p>
-                            <p><strong>Timestamp:</strong> <span th:text="${#temporals.format(incident.transactionDetails.timestamp, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Account Risk Profile Snapshot -->
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0"><span data-feather="user" class="me-1"></span>Account Snapshot</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>Risk Level:</strong> <span th:text="${incident.accountSnapshot.riskLevel}" th:classappend="${incident.accountSnapshot.riskLevel == 'RESTRICTED' ? 'badge-risk-restricted' : (incident.accountSnapshot.riskLevel == 'HIGH' ? 'badge-risk-high' : (incident.accountSnapshot.riskLevel == 'MEDIUM' ? 'badge-risk-medium' : 'badge-risk-low'))}" class="badge"></span></p>
-                            <p><strong>Average Amount:</strong> <span th:text="${incident.accountSnapshot.averageAmount}"></span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Usual Location:</strong> <span th:text="${incident.accountSnapshot.usualLocation}"></span></p>
-                            <p><strong>Previous Incidents:</strong> <span th:text="${incident.accountSnapshot.previousIncidents}"></span></p>
-                        </div>
-                     <a th:href="@{/accounts/{id}(id=${incident.accountSnapshot.accountId})}" class="btn btn-sm btn-outline-primary mt-2">View Full Profile</a>
-                </div>
-            </div>
+    <div class="content-card mb-4">
+        <div class="content-card-header">
+            <h5 class="content-card-title mb-0">
+                <i class="bi bi-filter-left"></i> Filter Decisions
+            </h5>
         </div>
-
-        <!-- Sidebar -->
-        <div class="col-lg-4">
-            <!-- Incident Summary -->
-            <div id="incident-summary-card" class="card mb-4 shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0"><span data-feather="info" class="me-1"></span>Summary</h5>
+        <div class="card-body p-4">
+            <form class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="statusFilter" class="form-label fw-bold small text-muted">STATUS</label>
+                    <select id="statusFilter" class="form-select border-0 bg-light" th:disabled="${isReadOnly}">
+                        <option selected>All Statuses</option>
+                        <option>PENDING</option>
+                        <option>APPROVED</option>
+                        <option>REJECTED</option>
+                        <option>ESCALATED</option>
+                    </select>
                 </div>
-                <div class="card-body">
-                    <p><strong>Incident ID:</strong> <span th:text="${incident.incidentId}"></span></p>
-                    <p><strong>Risk Score:</strong> <span th:text="${incident.riskScore}" th:classappend="${incident.riskScore >= 80 ? 'badge-risk-high' : (incident.riskScore >= 50 ? 'badge-risk-medium' : 'badge-risk-low')}" class="badge"></span></p>
-                    <p><strong>Status:</strong> <span id="incident-status-badge" th:text="${incident.status}" th:classappend="${incident.status == 'OPEN' ? 'bg-primary' : (incident.status == 'CONFIRMED_FRAUD' ? 'bg-danger' : (incident.status == 'FALSE_POSITIVE' ? 'bg-success' : 'bg-info text-dark'))}" class="badge"></span></p>
-                    <hr>
-                    <p><strong>Decision Reason:</strong> <span th:text="${incident.decisionReason}"></span></p>
+                <div class="col-md-3">
+                    <label for="riskLevelFilter" class="form-label fw-bold small text-muted">RISK LEVEL</label>
+                    <select id="riskLevelFilter" class="form-select border-0 bg-light" th:disabled="${isReadOnly}">
+                        <option selected>All Levels</option>
+                        <option>LOW</option>
+                        <option>MEDIUM</option>
+                        <option>HIGH</option>
+                        <option>CRITICAL</option>
+                    </select>
                 </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0"><span data-feather="activity" class="me-1"></span>Actions</h5>
-                </div>
-                <div class="card-body">
-                    <p>Change incident status:</p>
-                    <div class="d-grid gap-2">
-                        <!-- 
-                          HTMX will post to these (mock) endpoints.
-                          The backend should return a new status badge.
-                          hx-target="#incident-status-badge" replaces the badge content.
-                          hx-swap="outerHTML" replaces the entire <span> tag.
-                        -->
-                        <button class="btn btn-danger"
-                                hx-post="@{/api/incidents/{id}/confirm-fraud(id=${incidentId})}"
-                                hx-target="#incident-status-badge" hx-swap="outerHTML"
-                                th:disabled="${isReadOnly}"
-                                sec:authorize="!hasRole('ROLE_READ_ONLY')">
-                            Confirm Fraud
-                        </button>
-                        <button class="btn btn-warning"
-                                hx-post="@{/api/incidents/{id}/false-positive(id=${incidentId})}"
-                                hx-target="#incident-status-badge" hx-swap="outerHTML"
-                                th:disabled="${isReadOnly}"
-                                sec:authorize="!hasRole('ROLE_READ_ONLY')">
-                            Mark as False Positive
-                        </button>
-                        <button class="btn btn-success"
-                                hx-post="@{/api/incidents/{id}/close(id=${incidentId})}"
-                                hx-target="#incident-status-badge" hx-swap="outerHTML"
-                                th:disabled="${isReadOnly}"
-                                sec:authorize="!hasRole('ROLE_READ_ONLY')">
-                            Close Incident
-                        </button>
+                <div class="col-md-4">
+                    <label for="actorFilter" class="form-label fw-bold small text-muted">ACTOR</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="bi bi-person"></i></span>
+                        <input type="text" id="actorFilter" class="form-control border-0 bg-light"
+                               placeholder="Filter by actor..." th:attr="readonly=${isReadOnly}">
                     </div>
                 </div>
-            </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn-action w-100" th:disabled="${isReadOnly}"
+                            sec:authorize="!hasRole('ROLE_READ_ONLY')">
+                        Apply Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="content-card">
+        <div class="content-card-header">
+            <h2 class="content-card-title">
+                <i class="bi bi-list-check"></i> All Decisions
+            </h2>
+        </div>
+        <div class="table-responsive">
+            <table class="modern-table w-100">
+                <thead>
+                <tr>
+                    <th>Decision ID</th>
+                    <th>Status</th>
+                    <th>Risk Level</th>
+                    <th>Actor</th>
+                    <th>Created At</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="decision : ${decisions}">
+                    <td><span class="id-display" th:text="${decision.decisionId}">#DEC-001</span></td>
+                    <td>
+                            <span th:text="${decision.status}"
+                                  th:classappend="${decision.status == 'PENDING' ? 'badge-status-open' :
+                                                 (decision.status == 'APPROVED' ? 'badge-status-resolved' :
+                                                 (decision.status == 'REJECTED' ? 'badge-risk-high' : 'badge-status-investigating'))}"
+                                  class="badge-modern"></span>
+                    </td>
+                    <td>
+                            <span th:text="${decision.riskLevel}"
+                                  th:classappend="${decision.riskLevel == 'CRITICAL' || decision.riskLevel == 'HIGH' ? 'badge-risk-high' :
+                                                 (decision.riskLevel == 'MEDIUM' ? 'badge-risk-medium' : 'badge-risk-low'))}"
+                                  class="badge-modern"></span>
+                    </td>
+                    <td class="fw-medium text-dark" th:text="${decision.actor}">System Admin</td>
+                    <td class="text-muted small" th:text="${#temporals.format(decision.createdAt, 'dd/MM/yyyy HH:mm')}">25/02/2026 17:30</td>
+                    <td>
+                        <a th:href="@{/decisions/{id}(id=${decision.decisionId})}" class="btn-link text-decoration-none">
+                            <i class="bi bi-eye me-1"></i>Details
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(decisions)}">
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <i class="bi bi-shield-slash"></i>
+                            <p>No decisions found matching the filters.</p>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

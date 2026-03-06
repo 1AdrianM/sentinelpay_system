@@ -1,29 +1,38 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="https://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
 <head>
-    <title>Fraud Incidents</title>
+    <title>Sentinel Pay - Fraud Incidents</title>
 </head>
 <body>
 
-<div layout:fragment="content">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Fraud Incidents</h1>
+<div layout:fragment="content" class="p-4">
+    <div class="dashboard-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Fraud Incidents</h1>
+                <p class="dashboard-subtitle">Real-time fraud detection and monitoring system</p>
+            </div>
+            <button class="btn-action" sec:authorize="!hasRole('ROLE_READ_ONLY')">
+                <i class="bi bi-plus-circle me-2"></i>New Incident
+            </button>
+        </div>
     </div>
 
-    <!-- Filters Section -->
-    <div class="card mb-4 shadow-sm">
-        <div class="card-header">
-            <h5 class="mb-0">
-                <span data-feather="filter" class="me-1"></span>Filters
+    <div class="content-card mb-4">
+        <div class="content-card-header">
+            <h5 class="content-card-title mb-0">
+                <i class="bi bi-funnel"></i> Filter Incidents
             </h5>
         </div>
-        <div class="card-body">
+        <div class="card-body p-4">
             <form class="row g-3 align-items-end">
                 <div class="col-md-3">
-                    <label for="statusFilter" class="form-label">Status</label>
-                    <select id="statusFilter" class="form-select" th:disabled="${isReadOnly}">
-                        <option selected>All</option>
+                    <label for="statusFilter" class="form-label fw-bold small text-muted">STATUS</label>
+                    <select id="statusFilter" class="form-select border-0 bg-light" th:disabled="${isReadOnly}">
+                        <option selected>All Statuses</option>
                         <option>OPEN</option>
                         <option>UNDER_REVIEW</option>
                         <option>CONFIRMED_FRAUD</option>
@@ -32,9 +41,9 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="riskLevelFilter" class="form-label">Risk Level</label>
-                    <select id="riskLevelFilter" class="form-select" th:disabled="${isReadOnly}">
-                        <option selected>All</option>
+                    <label for="riskLevelFilter" class="form-label fw-bold small text-muted">RISK LEVEL</label>
+                    <select id="riskLevelFilter" class="form-select border-0 bg-light" th:disabled="${isReadOnly}">
+                        <option selected>All Levels</option>
                         <option>LOW</option>
                         <option>MEDIUM</option>
                         <option>HIGH</option>
@@ -42,43 +51,81 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label for="dateRangeFilter" class="form-label">Date Range</label>
-                    <input type="text" id="dateRangeFilter" class="form-control" placeholder="Select date..." th:attr="readonly=${isReadOnly}">
+                    <label for="dateRangeFilter" class="form-label fw-bold small text-muted">DATE RANGE</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="bi bi-calendar3"></i></span>
+                        <input type="text" id="dateRangeFilter" class="form-control border-0 bg-light"
+                               placeholder="Select date range..." th:attr="readonly=${isReadOnly}">
+                    </div>
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100" th:disabled="${isReadOnly}" sec:authorize="!hasRole('ROLE_READ_ONLY')">Apply</button>
+                    <button type="submit" class="btn-secondary w-100" th:disabled="${isReadOnly}"
+                            sec:authorize="!hasRole('ROLE_READ_ONLY')">
+                        Apply
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Incidents Table -->
-    <h4>All Incidents</h4>
-    <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead class="table-dark">
-            <tr>
-                <th>Incident ID</th>
-                <th>Account ID</th>
-                <th>Transaction ID</th>
-                <th>Risk Score</th>
-                <th>Status</th>
-                <th>Created At</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="incident : ${incidents}">
-                <td th:text="${incident.incidentId}"></td>
-                <td th:text="${incident.accountId}"></td>
-                <td th:text="${incident.transactionId}"></td>
-                <td><span th:text="${incident.riskScore}" th:classappend="${incident.riskScore >= 80 ? 'badge-risk-high' : (incident.riskScore >= 50 ? 'badge-risk-medium' : 'badge-risk-low')}" class="badge"></span></td>
-                <td><span th:text="${incident.status}" th:classappend="${incident.status == 'OPEN' ? 'bg-primary' : (incident.status == 'CONFIRMED_FRAUD' ? 'bg-danger' : (incident.status == 'FALSE_POSITIVE' ? 'bg-success' : 'bg-info text-dark'))}" class="badge"></span></td>
-                <td th:text="${#temporals.format(incident.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
-                <td><a th:href="@{/incidents/{id}(id=${incident.incidentId})}" class="btn btn-sm btn-info">View</a></td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="content-card">
+        <div class="content-card-header">
+            <h2 class="content-card-title">
+                <i class="bi bi-shield-exclamation text-success"></i> All Incidents
+            </h2>
+        </div>
+        <div class="table-responsive">
+            <table class="modern-table w-100">
+                <thead>
+                <tr>
+                    <th>Incident ID</th>
+                    <th>Account ID</th>
+                    <th>Transaction ID</th>
+                    <th>Risk Score</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="incident : ${incidents}">
+                    <td><span class="id-display" th:text="${incident.incidentId}">#INC-123</span></td>
+                    <td><span class="id-display" th:text="${incident.accountId}">#ACC-456</span></td>
+                    <td><span class="id-display" th:text="${incident.transactionId}">#TRX-789</span></td>
+
+                    <td>
+                        <span th:text="${incident.riskScore}"
+                              th:classappend="${incident.riskScore >= 80 ? 'badge-risk-high' : (incident.riskScore >= 50 ? 'badge-risk-medium' : 'badge-risk-low')}"
+                              class="badge-modern"></span>
+                    </td>
+
+                    <td>
+                        <span th:text="${incident.status}"
+                              th:classappend="${incident.status == 'OPEN' ? 'badge-status-investigating' :
+                                             (incident.status == 'CONFIRMED_FRAUD' ? 'badge-risk-high' :
+                                             (incident.status == 'FALSE_POSITIVE' ? 'badge-status-resolved' : 'badge-status-open'))}"
+                              class="badge-modern"></span>
+                    </td>
+
+                    <td class="text-muted small" th:text="${#temporals.format(incident.createdAt, 'dd/MM/yyyy HH:mm')}">25/02/2026 17:30</td>
+
+                    <td>
+                        <a th:href="@{/incidents/{id}(id=${incident.incidentId})}" class="btn-link text-decoration-none">
+                            <i class="bi bi-search me-1"></i>View
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(incidents)}">
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <i class="bi bi-shield-check"></i>
+                            <p>No fraud incidents found.</p>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

@@ -1,6 +1,8 @@
 package com.github.sentinel.pay.domain.entity.accountRiskProfile;
 
-import com.github.sentinel.pay.domain.entity.risk.RiskContribution;
+import com.github.sentinel.pay.domain.entity.risk.FraudSignal;
+import com.github.sentinel.pay.domain.entity.risk.RiskImpactScale;
+import com.github.sentinel.pay.domain.entity.risk.RiskMagnitude;
 import com.github.sentinel.pay.domain.entity.shared.Currency;
 
 import java.util.HashMap;
@@ -45,10 +47,10 @@ public record CurrencyProfile(
                        .max(Map.Entry.comparingByKey()).map(Map.Entry::getKey)
                        .orElse(null);
     }
-    public RiskContribution riskFromDiversityScore(){
-    if (diversity() > 0.60) return RiskContribution.HIGH;
-    if (diversity() > 0.35) return RiskContribution.MEDIUM;
-    return RiskContribution.LOW;
+    public FraudSignal riskFromDiversityScore(){
+    if (diversity() > 0.60) return FraudSignal.of(RiskMagnitude.HIGH, RiskImpactScale.SIGNIFICANT,"UnusualCurrency","High Diversity was Found in Currency data");
+    if (diversity() > 0.35) return FraudSignal.of(RiskMagnitude.MEDIUM,RiskImpactScale.MODERATE,"UnusualCurrency","Medium Diversity was found in currency data");
+    return FraudSignal.of(RiskMagnitude.NEGLIGIBLE,RiskImpactScale.MINIMAL,"Monetary","Low Diversity found in currency data");
     }
 
     public boolean isUnusualCurrency(Currency txCurrency){

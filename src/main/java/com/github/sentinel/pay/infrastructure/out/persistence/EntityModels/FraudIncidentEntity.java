@@ -21,7 +21,8 @@ public class FraudIncidentEntity {
      private UUID incidentId;
      private UUID transactionId;
     private UUID fraudDecisionId;
-   private UUID clientAccountId;
+    @Column(nullable = false)
+    private UUID clientAccountId;
      private UUID accountId;
      @Enumerated(value = EnumType.STRING)
      private FraudIncidentStatus status;

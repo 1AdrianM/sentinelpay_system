@@ -65,6 +65,7 @@ public class RiskProfileAdapter extends BasePersistenceAdapter<AccountRiskProfil
                   var risk= save(riskProfile);
                   return entityMapper.domainEntityToEntityModel(risk);
        });
+        System.out.println("Entity ID:"+ entity.getRiskProfileId()+" AccountID: "+entity.getAccountId());
       var domainEntity =entityMapper.EntityModelToDomainEntity(entity);
       var riskProfileId = new RiskProfileId(entity.getRiskProfileId());
       var currencyProfile=  findCurrencyProfileByRiskProfileId(riskProfileId);
@@ -83,26 +84,38 @@ public class RiskProfileAdapter extends BasePersistenceAdapter<AccountRiskProfil
 
     @Override
     public CurrencyProfile findCurrencyProfileByRiskProfileId(RiskProfileId id) {
-        var entity= this.currencyEntityRepository.findById(id.id()).orElseThrow(()-> new RuntimeException(""));
-     var map=  fromJsonCurrency(entity.getCurrencyCountJson());
+        var entity= this.currencyEntityRepository.findById(id.id()).orElse(null);
+        if(entity==null) {
+        return null;
+        }
+        var map=  fromJsonCurrency(entity.getCurrencyCountJson());
         return new CurrencyProfile(map,entity.getSample());
     }
 
     @Override
     public VelocityProfile findVelocityProfileByRiskProfileId(RiskProfileId id) {
-       var entity= this.velocityEntityRepository.findById(id.id()).orElseThrow(()-> new RuntimeException(""));;
+       var entity= this.velocityEntityRepository.findById(id.id()).orElse(null);
+       if(entity==null) {
+           return null;
+       }
         return new VelocityProfile(entity.getAvgTxPerHour(), entity.getAvgTxPerDay(), entity.getCurrentHourCount(),entity.getPeakTxPerHour(),entity.getSamples(),entity.getCurrentHourBucket(),entity.getLastUpdated());
     }
 
     @Override
     public MonetaryProfile findMonetaryProfileByRiskProfileId(RiskProfileId id) {
-        var entity= this.monetaryEntityRepository.findById(id.id()).orElseThrow(()-> new RuntimeException(""));;
+        var entity= this.monetaryEntityRepository.findById(id.id()).orElse(null);
+        if(entity==null){
+            return null;
+        }
         return new MonetaryProfile(entity.getMean(),entity.getM2(),entity.getMaxAmountObserved(),entity.getMinAmountObserved(),entity.getSamples());
     }
 
     @Override
     public LocationProfile findLocationProfileByRiskProfileId(RiskProfileId id) {
-        var entity= this.locationEntityRepository.findById(id.id()).orElseThrow(()-> new RuntimeException(""));;
+        var entity= this.locationEntityRepository.findById(id.id()).orElse(null);
+        if(entity==null) {
+        return null;
+        }
      var map = fromJsonLocation(entity.getLocationCountsJson());
         return new LocationProfile(map,entity.getSamples());
     }

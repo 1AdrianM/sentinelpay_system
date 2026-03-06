@@ -2,6 +2,7 @@ package com.github.sentinel.pay.infrastructure.out.persistence.mapper.adapters;
 
 import com.github.sentinel.pay.domain.entity.fraudIncident.FraudIncidentId;
 import com.github.sentinel.pay.domain.entity.shared.AccountId;
+import com.github.sentinel.pay.domain.entity.shared.ClientAccountId;
 import com.github.sentinel.pay.domain.entity.shared.Currency;
 import com.github.sentinel.pay.domain.entity.transaction.Channel;
 import com.github.sentinel.pay.domain.entity.transaction.Money;
@@ -16,6 +17,7 @@ public class TransactionMapperImpl implements TransactionMapper {
     @Override
     public TransactionEntity domainEntityToEntityModel(Transaction domainEntity) {
         return TransactionEntity.builder()
+                .clientAccountId(domainEntity.getClientAccountId().id())
                 .transactionId(domainEntity.getTransactionId().id())
                 .accountId(domainEntity.getAccountId().id())
                 .fraudIncidentId(domainEntity.getFraudIncidentId().id())
@@ -30,6 +32,7 @@ public class TransactionMapperImpl implements TransactionMapper {
     @Override
     public Transaction EntityModelToDomainEntity(TransactionEntity entityModel) {
         return Transaction.builder()
+                .clientAccountId(ClientAccountId.of(entityModel.getClientAccountId()))
                 .transactionId(new TransactionId(entityModel.getTransactionId()))
                 .accountId(new AccountId(entityModel.getAccountId()))
                 .fraudIncidentId(new FraudIncidentId(entityModel.getFraudIncidentId()))

@@ -70,7 +70,7 @@ public class GetDashBoardDataInteractor implements GetDashBoardDataUseCase {
                          )
                  .toList();
 
-
+        System.out.println("total transaction today: "+totalOfTransactionThisDay + "incident total: "+ openIncidentTotal+" confirmendFraudCount: "+ confirmedFraudCount);
          return DashBoardDto.builder()
                 .totalTxPerDay(totalOfTransactionThisDay)//ready
                 .openIncidents(openIncidentTotal)//ready

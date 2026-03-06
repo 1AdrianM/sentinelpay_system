@@ -32,10 +32,16 @@ public class SettingsController {
         System.out.println("settings data: "+settingInfoDto);
         // Agregar datos al modelo
         model.addAttribute("user", settingInfoDto.userDto);
-        model.addAttribute("apiKeys", settingInfoDto.apiKeyDtoList);
         return "settings";
     }
+    @GetMapping("/settings/api-keys")
+    public String apiKeys(Model model) {
+        // Your existing API keys loading        SettingInfoDto settingInfoDto= loadClienAccountIdDataUseCase.execute();
 
+        SettingInfoDto settingInfoDto= loadClienAccountIdDataUseCase.execute();
+        model.addAttribute("apiKeys", settingInfoDto.apiKeyDtoList);
+        return "api-keys";
+    }
     /**
      * POST /settings/profile - Actualizar perfil del usuario
      * HTMX retorna un fragmento con mensaje de éxito/error

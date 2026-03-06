@@ -17,7 +17,19 @@ public record Money(
      this.currency = currency;
 
   }
-   public boolean isGreaterThan(BigDecimal averageAmount){
+
+    public static Money of(String amount, String currency) {
+      if(currency.isBlank() ||currency.isEmpty()) {
+          throw new RuntimeException("currency is empty or blank");
+      }
+      if(amount.isEmpty()|| amount.isBlank()) {
+      throw new RuntimeException("amount is empty or blank");
+      }
+
+return new Money(new BigDecimal(amount),Currency.valueOf(currency));
+    }
+
+    public boolean isGreaterThan(BigDecimal averageAmount){
       return this.amount.compareTo(averageAmount)>0;
    }
 }

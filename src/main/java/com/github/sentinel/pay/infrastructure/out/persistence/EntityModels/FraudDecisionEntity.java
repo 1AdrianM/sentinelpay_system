@@ -2,6 +2,7 @@ package com.github.sentinel.pay.infrastructure.out.persistence.EntityModels;
 
 import com.github.sentinel.pay.domain.entity.fraudDecision.FraudDecisionType;
 import com.github.sentinel.pay.domain.entity.risk.RiskScore;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -21,7 +22,8 @@ import java.util.UUID;
 public class FraudDecisionEntity {
    @Id private UUID fraudDecisionId;
     private UUID transactionId;
- private UUID clientAccountId;
+    @Column(nullable = false)
+    private UUID clientAccountId;
  private int riskPoint;
     private FraudDecisionType fraudDecisionType;
     private UUID accountId;

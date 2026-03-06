@@ -21,6 +21,7 @@ public class TransactionEntity {
     @Id private UUID transactionId;
     private UUID accountId;
     private UUID fraudIncidentId;
+    @Column(nullable = false)
     private UUID clientAccountId;
     private TransactionType transactionType;
      private BigDecimal amount;

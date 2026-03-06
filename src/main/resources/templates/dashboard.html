@@ -1,148 +1,259 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/extras/spring-security"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout}">
 <head>
-    <title>Dashboard</title>
+    <title>Sentinel Pay - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
 </head>
 <body>
-
 <div layout:fragment="content">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Dashboard</h1>
-        <div class="btn-toolbar mb-2 mb-md-0">
-            <div class="btn-group me-2">
-                <button type="button" class="btn btn-sm btn-outline-secondary"
-                        th:disabled="${isReadOnly}"
-                        sec:authorize="!hasRole('ROLE_READ_ONLY')">Share</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary"
-                        th:disabled="${isReadOnly}"
-                        sec:authorize="!hasRole('ROLE_READ_ONLY')">Export</button>
-            </div>
-            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle"
-                    th:disabled="${isReadOnly}"
-                    sec:authorize="!hasRole('ROLE_READ_ONLY')">
-                <span data-feather="calendar"></span>
-                This week
-            </button>
-        </div>
-    </div>
+    <div class="container-fluid px-4">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <h1>Sentinel Pay Dashboard</h1>
+            <p class="dashboard-subtitle">Real-time fraud detection and monitoring system</p>
+        </header>
 
-    <!-- KPIs -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title text-muted">Total Transactions (Today)</h5>
-                            <p th:text="${dashboard.totalTxPerDay}" class="card-text fs-4 fw-bold"></p>
+        <!-- KPI Cards Row -->
+        <div class="row g-4">
+            <!-- Total Transactions Per Day -->
+            <div class="col-md-3 col-sm-6">
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <div class="kpi-icon green">
+                            <i class="bi bi-arrow-left-right"></i>
                         </div>
-                        <span data-feather="dollar-sign" class="text-muted" style="width:32px;height:32px;"></span>
                     </div>
+                    <div class="kpi-label">Transactions Today</div>
+                    <div class="kpi-value" th:text="${dashboard.totalTxPerDay}">1,247</div>
+                    <span class="kpi-trend up">
+                    <i class="bi bi-arrow-up"></i> 12.5% vs yesterday
+                </span>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title text-muted">Open Incidents</h5>
-                            <p th:text="${dashboard.openIncidents}" class="card-text fs-4 fw-bold"></p>
-                        </div>
-                        <span data-feather="alert-circle" class="text-warning" style="width:32px;height:32px;"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title text-muted">Confirmed Fraud</h5>
-                            <p th:text="${dashboard.confirmedFrauds}" class="card-text fs-4 fw-bold"></p>
-                        </div>
-                        <span data-feather="x-octagon" class="text-danger" style="width:32px;height:32px;"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title text-muted">High/Restricted Accounts</h5>
-                            <p th:text="${dashboard.highRestrictedAccounts}" class="card-text fs-4 fw-bold"></p>
-                        </div>
-                        <span data-feather="user-x" class="badge bg-danger" style="width:32px;height:32px;"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="row">
-        <!-- Central Section -->
-        <div class="col-md-8">
-            <h4 class="mb-3">Open Fraud Incidents</h4>
+            <!-- Open Incidents -->
+            <div class="col-md-3 col-sm-6">
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <div class="kpi-icon yellow">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-label">Open Incidents</div>
+                    <div class="kpi-value" th:text="${dashboard.openIncidents}">23</div>
+                    <span class="kpi-trend neutral">
+                    <i class="bi bi-dash"></i> Requires attention
+                </span>
+                </div>
+            </div>
+
+            <!-- Confirmed Frauds -->
+            <div class="col-md-3 col-sm-6">
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <div class="kpi-icon red">
+                            <i class="bi bi-shield-x"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-label">Confirmed Frauds</div>
+                    <div class="kpi-value" th:text="${dashboard.confirmedFrauds}">8</div>
+                    <span class="kpi-trend down">
+                    <i class="bi bi-arrow-down"></i> -15.2% vs last week
+                </span>
+                </div>
+            </div>
+
+            <!-- High Risk Restricted Accounts -->
+            <div class="col-md-3 col-sm-6">
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <div class="kpi-icon orange">
+                            <i class="bi bi-person-x"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-label">Restricted Accounts</div>
+                    <div class="kpi-value" th:text="${dashboard.highRestrictedAccounts}">34</div>
+                    <span class="kpi-trend up">
+                    <i class="bi bi-arrow-up"></i> High risk tier
+                </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Open Incidents Table -->
+        <div class="content-card">
+            <div class="content-card-header">
+                <h2 class="content-card-title">
+                    <i class="bi bi-flag"></i>
+                    Open Fraud Incidents
+                </h2>
+                <button class="btn-action">
+                    <i class="bi bi-plus-circle"></i> New Incident
+                </button>
+            </div>
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead class="table-dark">
+                <table class="modern-table">
+                    <thead>
                     <tr>
                         <th>Incident ID</th>
                         <th>Account ID</th>
-                        <th>Risk Score</th>
                         <th>Status</th>
-                        <th>Created At</th>
-                        <th>Action</th>
+                        <th>Risk Score</th>
+                        <th>Opened At</th>
+                        <th>Duration</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <!-- Mock Data Row 1 -->
-                    <tr th:each="fraud: ${dashboard.openFraudDtoList}">
-                        <td th:text="${fraud.incidentId}"></td>
-                        <td th:text="${fraud.accountId}"></td>
-                        <td ><span th:text="${fraud.riskScore}" class="badge badge-risk-high"></span></td>
-                        <td ><span th:text="${fraud.status}" class="badge bg-primary"></span></td>
-                        <td  th:text="${#temporals.format(fraud.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
-                        <td><a th:href="@{/incidents/{id}(id=${fraud.incidentId})}" class="btn btn-sm btn-primary">Review</a></td>
+                    <tr th:each="incident : ${dashboard.openFraudDtoList}">
+                        <td>
+                            <span class="id-display" th:text="${#strings.substring(incident.incidentId.toString(), 0, 8)}">abc123de</span>
+                        </td>
+                        <td>
+                            <span class="id-display" th:text="${#strings.substring(incident.accountId.toString(), 0, 8)}">xyz789fg</span>
+                        </td>
+                        <td>
+                        <span th:class="'badge-modern badge-status-' + ${#strings.toLowerCase(incident.status)}"
+                              th:text="${incident.status}">
+                            Open
+                        </span>
+                        </td>
+                        <td>
+                        <span th:class="${incident.riskScore >= 80} ? 'badge-modern badge-risk-critical' :
+                                        ${incident.riskScore >= 60} ? 'badge-modern badge-risk-high' :
+                                        ${incident.riskScore >= 40} ? 'badge-modern badge-risk-medium' :
+                                        'badge-modern badge-risk-low'"
+                              th:text="${incident.riskScore}">
+                            75
+                        </span>
+                        </td>
+                        <td th:text="${#temporals.format(incident.openedAt, 'MMM dd, yyyy HH:mm')}">
+                            Jan 15, 2024 14:32
+                        </td>
+                        <td>
+                            <span th:if="${incident.resolvedAt == null}" class="text-muted">Ongoing</span>
+                            <span th:if="${incident.resolvedAt != null}"
+                                  th:text="${T(java.time.Duration).between(incident.openedAt, incident.resolvedAt).toHours()} + ' hours'">
+                            2 hours
+                        </span>
+                        </td>
+                        <td>
+                            <button class="btn-link">
+                                <i class="bi bi-eye"></i> View Details
+                            </button>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
+                <div th:if="${#lists.isEmpty(dashboard.openFraudDtoList)}" class="empty-state">
+                    <i class="bi bi-check-circle"></i>
+                    <p>No open incidents at the moment</p>
+                </div>
             </div>
         </div>
 
-        <!-- Side Section -->
-        <div class="col-md-4">
-            <h4 class="mb-3">Top 5 Risky Accounts</h4>
-            <ul th:each="profile: ${dashboard.toFiveRiskProfileDtoList}" class="list-group mb-4 shadow-sm">
-                <li th:text="${profile.riskProfileId}" class="list-group-item d-flex justify-content-between align-items-center">
-
-                    <span th:text="${profile.riskLevel}" class="badge badge-risk-restricted rounded-pill"></span>
-                </li>
-            </ul>
-
-            <h4 class="mb-3">Last Fraud Decisions</h4>
-            <div th:each="decision : ${dashboard.latestFraudDecisionList}" class="list-group shadow-sm">
-                <a href="#" class="list-group-item list-group-item-action">
-                    <div class="d-flex w-100 justify-content-between">
-                        <!-- Mostrar ID y tipo de decisión -->
-                        <h6 class="mb-1" th:text="${decision.decisionId + ' | ' + decision.decisionType}"></h6>
-
-                        <!-- Mostrar fecha formateada -->
-                        <small th:text="${#temporals.format(decision.createdAt, 'dd/MM/yyyy HH:mm')}"></small>
+        <!-- Two Column Layout -->
+        <div class="row g-4 mt-2">
+            <!-- Top 5 Risk Profiles -->
+            <div class="col-lg-6">
+                <div class="content-card">
+                    <div class="content-card-header">
+                        <h2 class="content-card-title">
+                            <i class="bi bi-graph-up-arrow"></i>
+                            Top 5 Risk Profiles
+                        </h2>
+                        <button class="btn-secondary">View All</button>
                     </div>
-                    <!-- Mostrar cuenta -->
-                    <small th:text="'Account: ' + ${decision.accountId}"></small>
-                </a>
+                    <div>
+                        <div th:each="profile : ${dashboard.toFiveRiskProfileDtoList}" class="risk-profile-item">
+                            <div class="risk-profile-header">
+                            <span class="risk-profile-id">
+                                <i class="bi bi-person-badge"></i>
+                                <span th:text="${profile.riskProfileId}">RP-2024-001</span>
+                            </span>
+                                <span th:class="${profile.riskLevel == 'CRITICAL'} ? 'badge-modern badge-risk-critical' :
+                                           ${profile.riskLevel == 'HIGH'} ? 'badge-modern badge-risk-high' :
+                                           ${profile.riskLevel == 'MEDIUM'} ? 'badge-modern badge-risk-medium' :
+                                           'badge-modern badge-risk-low'"
+                                      th:text="${profile.riskLevel}">
+                                High
+                            </span>
+                            </div>
+                            <div class="risk-profile-summary" th:text="${profile.behaviourSummary}">
+                                Multiple high-value transactions from different locations within short time frame. Pattern matches known fraud scenarios.
+                            </div>
+                            <div class="risk-profile-incidents">
+                                <i class="bi bi-exclamation-circle"></i>
+                                <span th:text="${#lists.size(profile.incidentResponseDtoList)} + ' related incident(s)'">
+                                3 related incidents
+                            </span>
+                            </div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(dashboard.toFiveRiskProfileDtoList)}" class="empty-state">
+                            <i class="bi bi-shield-check"></i>
+                            <p>No high-risk profiles detected</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
+            <!-- Latest Fraud Decisions -->
+            <div class="col-lg-6">
+                <div class="content-card">
+                    <div class="content-card-header">
+                        <h2 class="content-card-title">
+                            <i class="bi bi-clipboard-check"></i>
+                            Latest Fraud Decisions
+                        </h2>
+                        <button class="btn-secondary">Export</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="modern-table">
+                            <thead>
+                            <tr>
+                                <th>Decision ID</th>
+                                <th>Account</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="decision : ${dashboard.latestFraudDecisionList}">
+                                <td>
+                                    <span class="id-display" th:text="${#strings.substring(decision.decisionId, 0, 10)}">DEC-001</span>
+                                </td>
+                                <td>
+                                    <span class="id-display" th:text="${#strings.substring(decision.accountId, 0, 8)}">acc-123</span>
+                                </td>
+                                <td>
+                                <span th:class="${decision.decisionType == 'APPROVED'} ? 'badge-modern badge-decision-approved' :
+                                               ${decision.decisionType == 'REJECTED'} ? 'badge-modern badge-decision-rejected' :
+                                               'badge-modern badge-decision-review'"
+                                      th:text="${decision.decisionType}">
+                                    Approved
+                                </span>
+                                </td>
+                                <td th:text="${#temporals.format(decision.createdAt, 'MMM dd, HH:mm')}">
+                                    Jan 15, 14:32
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div th:if="${#lists.isEmpty(dashboard.latestFraudDecisionList)}" class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <p>No recent decisions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </div>
 </div>
-
 </body>
 </html>

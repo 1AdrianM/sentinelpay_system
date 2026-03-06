@@ -1,69 +1,137 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
-    <title>Transaction Console</title>
+    <title>Sentinel Pay - Transaction Console</title>
     <style>
-        .json-editor {
-            font-family: monospace;
-            height: 400px;
+        /* Estilo específico para simular un editor de código Pro */
+        .json-editor-container {
+            background-color: #1e1e1e; /* Color oscuro tipo VS Code */
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid #333;
         }
+
+        .json-editor {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            height: 450px;
+            background: transparent;
+            color: #d4d4d4;
+            border: none;
+            resize: none;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            width: 100%;
+        }
+
+        .json-editor:focus {
+            outline: none;
+            box-shadow: none;
+            background: transparent;
+            color: #10b981; /* Se vuelve verde al editar */
+        }
+
+        .endpoint-badge {
+            background: #111827;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .method-post {
+            color: #10b981;
+            font-weight: 800;
+        }
+
         #response-container {
-            height: 100%;
+            min-height: 450px;
+            background-color: #f9fafb;
+            border-radius: 8px;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .response-active {
+            background-color: #1e1e1e !important;
+            color: #9cdcfe !important;
+            border: 1px solid #333 !important;
         }
     </style>
 </head>
 <body>
 
-<div layout:fragment="content">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Transaction Console</h1>
+<div layout:fragment="content" class="p-4">
+
+    <div class="dashboard-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Transaction Console</h1>
+                <p class="dashboard-subtitle">Test the risk engine API with custom JSON payloads</p>
+            </div>
+            <div class="d-flex gap-2">
+                <span class="badge-modern badge-status-investigating">
+                    <i class="bi bi-cpu me-1"></i> API v1.2.0
+                </span>
+            </div>
+        </div>
     </div>
 
     <div class="row g-4">
-        <!-- Request Section -->
         <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <span data-feather="arrow-right-circle" class="me-1"></span>Request
+            <div class="content-card border-0 shadow-sm">
+                <div class="content-card-header d-flex justify-content-between align-items-center">
+                    <h5 class="content-card-title mb-0">
+                        <i class="bi bi-terminal"></i> Request Payload
                     </h5>
+                    <small class="text-muted">Content-Type: application/json</small>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <span class="badge bg-primary me-2">POST</span>
-                        <code class="fs-6">/api/transactions/evaluate</code>
+                <div class="card-body p-3">
+                    <div class="endpoint-badge mb-3">
+                        <span class="method-post">POST</span>
+                        <span class="text-muted small">/api/v1/transactions/evaluate</span>
                     </div>
+
                     <form id="transaction-form">
-                        <div class="mb-3">
-                            <label for="json-payload" class="form-label">JSON Payload</label>
-                            <textarea id="json-payload" name="jsonPayload" class="form-control json-editor" th:text="${sampleJson}"></textarea>
+                        <div class="json-editor-container">
+                            <textarea id="json-payload"
+                                      name="jsonPayload"
+                                      class="form-control json-editor"
+                                      th:text="${sampleJson}"
+                                      spellcheck="false"></textarea>
                         </div>
-                        <button type="button"
-                                class="btn btn-primary w-100"
-                                hx-post="/transactions/evaluate"
-                                hx-include="#json-payload"
-                                hx-target="#response-container"
-                                hx-swap="innerHTML"
-                                hx-headers='{"Content-Type":"application/json"}'>
-                            Send Transaction
-                        </button>
+
+                        <div class="mt-3">
+                            <button type="button"
+                                    class="btn-action w-100 py-2"
+                                    hx-post="/transactions/evaluate"
+                                    hx-include="#json-payload"
+                                    hx-target="#response-container"
+                                    hx-swap="innerHTML">
+                                <i class="bi bi-send-fill me-2"></i>Execute Transaction
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- Response Section -->
         <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <span data-feather="arrow-left-circle" class="me-1"></span>Response
+            <div class="content-card border-0 shadow-sm">
+                <div class="content-card-header">
+                    <h5 class="content-card-title mb-0">
+                        <i class="bi bi-braces"></i> Server Response
                     </h5>
                 </div>
-                <div id="response-container" class="card-body">
-                    <div class="text-center text-muted p-5">
-                        <p>Response will appear here after sending a transaction.</p>
+                <div class="card-body p-3">
+                    <div id="response-container" class="p-4 d-flex align-items-center justify-content-center flex-column text-center">
+                        <div class="empty-state">
+                            <i class="bi bi-hdd-network mb-3" style="font-size: 2.5rem;"></i>
+                            <p class="text-muted">Waiting for execution...<br>Submit a payload to see the risk analysis results.</p>
+                        </div>
                     </div>
                 </div>
             </div>

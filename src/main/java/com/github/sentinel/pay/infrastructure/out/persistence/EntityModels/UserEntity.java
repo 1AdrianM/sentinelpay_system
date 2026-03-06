@@ -20,6 +20,7 @@ public class UserEntity {
 
     @Id
     private UUID id;
+    @Column(nullable = false)
     private UUID clientAccountId;
     @Column(nullable = false)
     private String name;

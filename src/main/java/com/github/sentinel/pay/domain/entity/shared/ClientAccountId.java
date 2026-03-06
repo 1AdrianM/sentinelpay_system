@@ -7,4 +7,7 @@ public record ClientAccountId(UUID id) {
         return new ClientAccountId(UUID.randomUUID());
     }
 
+    public static ClientAccountId of(UUID clientAccountId) {
+        return new ClientAccountId(clientAccountId);
+    }
 }

@@ -4,6 +4,10 @@ public record Location(
         String city,
         String country
 ) {
+    public static Location of(String city, String country) {
+        return new Location(city, country);
+    }
+
     public boolean isUnusualComparedTo(Location otherLocation) {
         return this.country.equals(otherLocation.country) || this.city.equals(otherLocation.city);
     }

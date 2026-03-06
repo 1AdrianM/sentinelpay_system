@@ -52,7 +52,7 @@ public class TransactionAdapter extends BasePersistenceAdapter<Transaction, Tran
     public int findTransactionCountThisDay(Instant now, ClientAccountId clientAccountId) {
         Instant startOfDay = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant();
         Instant endOfDay = startOfDay.plus(1, ChronoUnit.DAYS).minusMillis(1);
-
+        System.out.println("Client Account: " +clientAccountId.id());
         return this.entityRepository.findTransactionCountThisDay(startOfDay,endOfDay, clientAccountId.id());
     }
 }
