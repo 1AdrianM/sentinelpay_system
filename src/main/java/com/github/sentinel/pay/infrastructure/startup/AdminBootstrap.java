@@ -1,6 +1,6 @@
 package com.github.sentinel.pay.infrastructure.startup;
 
-import com.github.sentinel.pay.application.services.CreateAdminUserUseCase;
+import com.github.sentinel.pay.application.usecases.CreateAdminUserUseCase;
 import com.github.sentinel.pay.domain.entity.auth.user.User;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

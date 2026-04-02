@@ -1,11 +1,13 @@
 package com.github.sentinel.pay.domain.entity.fraudRules;
 
+import org.springframework.stereotype.Component;
+
 import com.github.sentinel.pay.domain.entity.accountRiskProfile.AccountRiskProfile;
 import com.github.sentinel.pay.domain.entity.risk.FraudSignal;
 import com.github.sentinel.pay.domain.entity.risk.RiskImpactScale;
 import com.github.sentinel.pay.domain.entity.risk.RiskMagnitude;
 import com.github.sentinel.pay.domain.entity.transaction.Transaction;
-
+@Component
 public record UnusualCurrencyFraudRule() implements FraudRule {
     @Override
     public FraudSignal evaluateTransaction(Transaction tx, AccountRiskProfile accountRiskProfile) {

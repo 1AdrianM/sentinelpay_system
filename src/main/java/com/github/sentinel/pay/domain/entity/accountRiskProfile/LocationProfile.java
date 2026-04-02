@@ -2,23 +2,41 @@ package com.github.sentinel.pay.domain.entity.accountRiskProfile;
 
 import com.github.sentinel.pay.domain.entity.shared.Location;
 
- import java.util.HashMap;
-import java.util.Map;
-public record LocationProfile(
-        Map<Location, Integer> locationCount,
-        long samples
-) {
+import groovy.transform.builder.Builder;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    public static LocationProfile empty() {
-        return new LocationProfile(new HashMap<>(), 0);
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class LocationProfile{
+     private UUID id;
+       private Map<Location, Integer> locationCount;
+       private long samples;
+       private Instant lastUpdatedAt;
+
+  
+    public static LocationProfile initial() {
+        return new LocationProfile(
+            UUID.randomUUID(),
+            new HashMap<>(),
+             0,
+            null);
     }
 
 
 
-    public LocationProfile observe(Location location) {
-        var newMap = new HashMap<>(locationCount);
-        newMap.merge(location, 1, Integer::sum);
-        return new LocationProfile(newMap, samples + 1);
+    public void observe(Location location) {
+        
+        this.locationCount.merge(location, 1, Integer::sum);
+        this.samples++;
     }
 
     public Location mostFrequentLocation() {
@@ -51,4 +69,5 @@ public record LocationProfile(
     public boolean isUnusual(Location txLocation) {
         return !mostFrequentLocation().equals(txLocation) && confidence(txLocation) > 0.6;
     }
+ 
 }

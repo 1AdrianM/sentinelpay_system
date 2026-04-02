@@ -5,22 +5,35 @@ import com.github.sentinel.pay.domain.entity.risk.RiskImpactScale;
 import com.github.sentinel.pay.domain.entity.risk.RiskMagnitude;
 import com.github.sentinel.pay.domain.entity.shared.Currency;
 
+import groovy.transform.builder.Builder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Getter
+public class CurrencyProfile{
+        private UUID id;
+        private  Map<Currency,Integer> currencyCount;
+        private   long sample;
+        private  Instant lastUpdated;
 
-public record CurrencyProfile(
-           Map<Currency,Integer> currencyCount,
-           long sample
-) {
-    public static CurrencyProfile empty() {
-        Map<Currency,Integer> newMap  = new HashMap<>();
-        return new CurrencyProfile(newMap,0);
+    public static CurrencyProfile initial() {
+         
+        return new CurrencyProfile(UUID.randomUUID(),
+         new HashMap<Currency,Integer>(),
+        0, null);
     }
 
-    public CurrencyProfile observe(Currency currency){
-        var newMap  = new HashMap<>(currencyCount);
-        newMap.merge(currency,1,Integer::sum);
-       return new CurrencyProfile(newMap, sample + 1);
+    public void observe(Currency currency){
+        currencyCount.merge(currency,1,Integer::sum);
+       this.sample++;
     }
 
     public double confidence(Currency currency) {
@@ -45,7 +58,7 @@ public record CurrencyProfile(
                        .entrySet()
                        .stream()
                        .max(Map.Entry.comparingByKey()).map(Map.Entry::getKey)
-                       .orElse(null);
+                       .orElseThrow(() -> new IllegalStateException("No currency observed yet"));
     }
     public FraudSignal riskFromDiversityScore(){
     if (diversity() > 0.60) return FraudSignal.of(RiskMagnitude.HIGH, RiskImpactScale.SIGNIFICANT,"UnusualCurrency","High Diversity was Found in Currency data");
@@ -56,4 +69,6 @@ public record CurrencyProfile(
     public boolean isUnusualCurrency(Currency txCurrency){
     return !mostRepeatedCurrency().equals(txCurrency) && diversity() > 0.6;
     }
+
+
 }

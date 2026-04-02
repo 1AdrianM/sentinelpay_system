@@ -24,26 +24,27 @@ public class UnusualLocationFraudRuleTest {
 
     @Test
     void ShouldReturnHighRiskContributionWhenTransactionLocationIsUnusual(){
-        Transaction tx = new Transaction(
+        Transaction tx = Transaction.create(
                 new TransactionId(java.util.UUID.randomUUID()),
                 new ClientAccountId(java.util.UUID.randomUUID()),
                 new AccountId(java.util.UUID.randomUUID()),
-                new FraudIncidentId(java.util.UUID.randomUUID()),
-                TransactionType.CRYPTO_TRANSFER,
                 new Location("RD","SD"),
                 new Money(new BigDecimal("6000"), Currency.USD),
-                Instant.now(),
-                Channel.ONLINE
+                TransactionType.CRYPTO_TRANSFER,
+               Channel.ONLINE,
+                Instant.now()
         );
+                        var profileId= AccountRiskProfile.generateRiskProfileId();
+
         AccountRiskProfile riskProfile = new AccountRiskProfile(
-                AccountRiskProfile.generateRiskProfileId(),
+            profileId,
                 new ClientAccountId(java.util.UUID.randomUUID()),
                 new AccountId(java.util.UUID.randomUUID()),
                 RiskLevel.LOW,
                 null, // IncidentStatistics
-                LocationProfile.empty(),
+                LocationProfile.initial(),
                 MonetaryProfile.initial(new BigDecimal("2000")),
-                CurrencyProfile.empty(),
+                CurrencyProfile.initial(),
                 VelocityProfile.initial(),
                 1, // averageRiskScore
                 Instant.now()

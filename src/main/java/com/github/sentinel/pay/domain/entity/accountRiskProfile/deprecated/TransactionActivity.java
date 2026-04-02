@@ -1,15 +1,10 @@
 package com.github.sentinel.pay.domain.entity.accountRiskProfile.deprecated;
 
-import com.github.sentinel.pay.domain.entity.risk.FraudSignal;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Deque;
-
+ 
 public record TransactionActivity(
-        int lastHourTransactionAt,
-        Deque<Instant> mostRecentTransactionsTimeStamps
+     //   int lastHourTransactionAt,
+      //  Deque<Instant> mostRecentTransactionsTimeStamps
 ) {
 /*
     private static final int CRITICAL_INTERVAL_MS = 2000; // 2 segundos

@@ -5,9 +5,9 @@ public enum RiskMagnitude {
     HIGH(75),
     MEDIUM(50),
     LOW(25),
-    NEGLIGIBLE(0);
+    NEGLIGIBLE(5);
 
     private final int score;
     RiskMagnitude(int score) { this.score = score; }
-    public int getScore() { return score; }
+    public int getScore() { return this.score; }
 }

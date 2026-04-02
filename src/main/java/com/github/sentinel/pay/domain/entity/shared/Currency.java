@@ -5,7 +5,9 @@ public enum Currency {
     EUR,
     JAP,
     DO,
-    MX
+    MX;
+    
+
 
 
 }

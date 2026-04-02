@@ -1,5 +1,6 @@
 package com.github.sentinel.pay.infrastructure.out.persistence.adapter;
 
+import com.github.sentinel.pay.domain.entity.fraudDecision.FraudDecisionId;
 import com.github.sentinel.pay.domain.entity.fraudIncident.FraudIncident;
 import com.github.sentinel.pay.domain.entity.fraudIncident.FraudIncidentId;
 import com.github.sentinel.pay.domain.entity.fraudIncident.FraudIncidentStatus;
@@ -30,8 +31,9 @@ public class FraudIncidentAdapter extends BasePersistenceAdapter<FraudIncident, 
     }
 
     @Override
-    public FraudIncident findOpenByTransactionId(TransactionId transactionId) {
-        return entityMapper.EntityModelToDomainEntity(this.entityRepository.findByTransactionIdAndStatus(transactionId.id(), FraudIncidentStatus.OPEN));
+    public List<FraudIncident> findOpenByTransactionId(TransactionId transactionId) {
+      var incidents=  this.entityRepository.findIncidentsByTransactionIdAndStatus(transactionId.id(), FraudIncidentStatus.OPEN);
+      return incidents.stream().map(entityMapper::EntityModelToDomainEntity).collect(Collectors.toList());
     }
 
     @Override
@@ -83,5 +85,26 @@ public class FraudIncidentAdapter extends BasePersistenceAdapter<FraudIncident, 
                 .stream()
                 .map(entityMapper::EntityModelToDomainEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public FraudIncident findIncidentOpenByTransactionId(TransactionId transactionId) {
+        
+        FraudIncidentEntity incident=  this.entityRepository.findIncidentByTransactionIdAndStatus(transactionId.id(), FraudIncidentStatus.OPEN);
+       return entityMapper.EntityModelToDomainEntity(incident);
+    }
+
+    @Override
+    public List<FraudIncident> findIncidentsByDecisionId(FraudDecisionId id) {
+        var incidents= this.entityRepository.findByDecision_Id(id.id());
+        return incidents.stream().map(entityMapper::EntityModelToDomainEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FraudIncident> findAllOpenFraudIncidents(ClientAccountId clientAccountId) {
+        var fraudIncidentList= this.entityRepository.findAllOpenFraudIncidents(clientAccountId.id());
+       return fraudIncidentList.stream()
+             .map(entityMapper::EntityModelToDomainEntity)
+             .collect(Collectors.toList());
     }
 }

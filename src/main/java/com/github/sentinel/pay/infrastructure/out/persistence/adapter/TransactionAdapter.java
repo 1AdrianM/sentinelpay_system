@@ -43,8 +43,8 @@ public class TransactionAdapter extends BasePersistenceAdapter<Transaction, Tran
 
 
     @Override
-    public Transaction findByIncidentId(FraudIncidentId incidentId) {
-        TransactionEntity transactionEntity=  this.entityRepository.findByFraudIncidentId(incidentId.id());
+    public Transaction findByIncidentId( FraudIncidentId id) {
+        TransactionEntity transactionEntity=  this.entityRepository.findByFraudIncidentsId(id.id()).orElseThrow(()->new RuntimeException("Transaction not found for fraud incident: " + id.id()));
         return entityMapper.EntityModelToDomainEntity(transactionEntity);
     }
 

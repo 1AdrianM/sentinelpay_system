@@ -1,10 +1,7 @@
 package com.github.sentinel.pay.domain.entity.auth.user;
 
 import com.github.sentinel.pay.domain.entity.shared.ClientAccountId;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.Email;
+
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

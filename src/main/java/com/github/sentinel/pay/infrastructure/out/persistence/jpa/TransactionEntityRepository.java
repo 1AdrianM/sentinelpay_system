@@ -2,6 +2,8 @@ package com.github.sentinel.pay.infrastructure.out.persistence.jpa;
 
 import com.github.sentinel.pay.infrastructure.out.persistence.EntityModels.TransactionEntity;
 import com.github.sentinel.pay.infrastructure.out.persistence.jpa.generic.EntityRepository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -22,7 +24,8 @@ public interface TransactionEntityRepository extends EntityRepository<Transactio
     )
     List<TransactionEntity> findAllFraudulentTransactions();
 
-    TransactionEntity findByFraudIncidentId(UUID fraudIncidentId);
+
+     Optional<TransactionEntity> findByFraudIncidentsId(UUID fraudIncidentId);
 
     @Query("""
                 SELECT COUNT(t)

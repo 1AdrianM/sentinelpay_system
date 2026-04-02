@@ -1,7 +1,5 @@
 package com.github.sentinel.pay.application.dto.user;
 
-import com.github.sentinel.pay.domain.entity.auth.user.UserId;
-import com.github.sentinel.pay.domain.entity.auth.user.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.*;

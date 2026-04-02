@@ -80,7 +80,7 @@
                 <tr>
                     <th>Decision ID</th>
                     <th>Status</th>
-                    <th>Risk Level</th>
+                 <!--   <th>Risk Level</th>-->
                     <th>Actor</th>
                     <th>Created At</th>
                     <th>Action</th>
@@ -91,21 +91,21 @@
                     <td><span class="id-display" th:text="${decision.decisionId}">#DEC-001</span></td>
                     <td>
                             <span th:text="${decision.status}"
-                                  th:classappend="${decision.status == 'PENDING' ? 'badge-status-open' :
+                                  th:classappend="${decision.status == 'REVIEW_REQUIRED' ? 'badge-status-open' :
                                                  (decision.status == 'APPROVED' ? 'badge-status-resolved' :
-                                                 (decision.status == 'REJECTED' ? 'badge-risk-high' : 'badge-status-investigating'))}"
+                                                 (decision.status == 'FRAUD_SUSPECTED' ? 'badge-risk-high' : 'badge-status-investigating'))}"
                                   class="badge-modern"></span>
                     </td>
-                    <td>
+                    <!--<td>
                             <span th:text="${decision.riskLevel}"
                                   th:classappend="${decision.riskLevel == 'CRITICAL' || decision.riskLevel == 'HIGH' ? 'badge-risk-high' :
-                                                 (decision.riskLevel == 'MEDIUM' ? 'badge-risk-medium' : 'badge-risk-low'))}"
+                                                 (decision.riskLevel == 'MEDIUM' ? 'badge-risk-medium' : 'badge-risk-low')}"
                                   class="badge-modern"></span>
-                    </td>
+                    </td>-->
                     <td class="fw-medium text-dark" th:text="${decision.actor}">System Admin</td>
                     <td class="text-muted small" th:text="${#temporals.format(decision.createdAt, 'dd/MM/yyyy HH:mm')}">25/02/2026 17:30</td>
                     <td>
-                        <a th:href="@{/decisions/{id}(id=${decision.decisionId})}" class="btn-link text-decoration-none">
+                        <a th:href="@{/decision/{id}(id=${decision.decisionId})}" class="btn-link text-decoration-none">
                             <i class="bi bi-eye me-1"></i>Details
                         </a>
                     </td>

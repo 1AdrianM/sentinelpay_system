@@ -20,12 +20,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ApiKeyEntity {
    @Id
-   private UUID id;
+    private UUID id;
     private String name;
     @Column(nullable = false)
     private UUID clientAccountId;
     private String hashedKey;
     private String status;
+    private String rawKey;
     private Instant createdAt;
     private Instant lastUsedAt;
 }

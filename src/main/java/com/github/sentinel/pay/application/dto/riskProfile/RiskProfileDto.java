@@ -7,8 +7,8 @@ import java.util.List;
 
 @Builder
 public class RiskProfileDto {
-    String riskProfileId;
-    String riskLevel;
-    String behaviourSummary;
-    List<IncidentResponseDto> incidentResponseDtoList;
+   public  String riskProfileId;
+   public String riskLevel;
+   public  String behaviourSummary;
+   public  List<IncidentResponseDto> incidentResponseDtoList;
 }

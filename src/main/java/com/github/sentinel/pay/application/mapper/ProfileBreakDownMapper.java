@@ -3,7 +3,6 @@ package com.github.sentinel.pay.application.mapper;
 import com.github.sentinel.pay.application.dto.riskProfile.ProfileEvaluationDto;
 import com.github.sentinel.pay.domain.entity.risk.FraudSignal;
 
-import java.util.List;
 
 public class ProfileBreakDownMapper {
 

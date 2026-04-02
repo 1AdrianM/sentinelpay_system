@@ -39,7 +39,6 @@ public class AuditEntry {
        );
    }
    public static  AuditLog  decisionOverridden(FraudDecisionId decisionId, ClientAccountId clientAccountId,AuditReason reason, ActorType actor, AuditSnapshot prevSnapShot, AuditSnapshot nextSnapShot) {
-       var now = Instant.now();
        return new AuditLog(
                AuditLog.generateAuditLogId(),
                decisionId.id(),
@@ -55,7 +54,6 @@ public class AuditEntry {
    }
 
    public static AuditLog incidentResolved(FraudIncidentId incidentId, ClientAccountId clientAccountId, AuditReason reason,ActorType actor, AuditSnapshot prevSnapShot, AuditSnapshot nextSnapShot) {
-var now = Instant.now();
        return new AuditLog(
                AuditLog.generateAuditLogId(),
                incidentId.id(),

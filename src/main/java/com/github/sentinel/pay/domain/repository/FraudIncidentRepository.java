@@ -1,5 +1,6 @@
 package com.github.sentinel.pay.domain.repository;
 
+import com.github.sentinel.pay.domain.entity.fraudDecision.FraudDecisionId;
 import com.github.sentinel.pay.domain.entity.fraudIncident.FraudIncident;
 import com.github.sentinel.pay.domain.entity.fraudIncident.FraudIncidentId;
 import com.github.sentinel.pay.domain.entity.shared.AccountId;
@@ -8,11 +9,12 @@ import com.github.sentinel.pay.domain.entity.transaction.TransactionId;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface FraudIncidentRepository {
 
 
-    FraudIncident findOpenByTransactionId(TransactionId transactionId);
+    List<FraudIncident> findOpenByTransactionId(TransactionId transactionId);
 
     List<FraudIncident> findOpenByAccountId(AccountId accountId);
 
@@ -29,6 +31,13 @@ public interface FraudIncidentRepository {
     int findOpenIncidentCount(ClientAccountId clientAccountId);
 
     List<FraudIncident> findAllConfirmedFraudIncidents(ClientAccountId clientAccountId);
+    List<FraudIncident> findAllOpenFraudIncidents(ClientAccountId clientAccountId);
 
     List<FraudIncident> findAllByAccountId(AccountId accountID, Pageable pageable);
+
+    FraudIncident findIncidentOpenByTransactionId(TransactionId transactionId);
+
+    List<FraudIncident> findIncidentsByDecisionId(FraudDecisionId id);
+
+    FraudIncident update(UUID incidentId, FraudIncident incident);
 }

@@ -4,27 +4,51 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
-public record   VelocityProfile(
-         BigDecimal avgTxPerHour,
-         BigDecimal avgTxPerDay,
-         int currentHourCount,
-                 int peakTxPerHour,
-         long samples,
-         Instant currentHourBucket,
-         Instant lastUpdated
-){
+import groovy.transform.builder.Builder;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+public class   VelocityProfile{
+        private UUID id;
+       private  BigDecimal avgTxPerHour;
+       private  BigDecimal avgTxPerDay;
+        private int currentHourCount;
+         private        int peakTxPerHour;
+        private long samples;
+       private  Instant currentHourBucket;
+       private  Instant lastUpdated;
+
 
     public static VelocityProfile initial() {
         return new VelocityProfile(
-                null,null,0,0,0,null,null
+                UUID.randomUUID(),
+        
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                0
+                ,0,
+                0,
+                null,
+                null
         );
     }
 
-    public VelocityProfile update(Instant txTime) {
+    public void observe(Instant txTime) {
 
+        if(currentHourBucket ==null){
+                currentHourBucket=txTime;
+        }
+        
             Instant hourBucket = txTime.truncatedTo(ChronoUnit.HOURS);
 
+
+              
              int hourCount = currentHourBucket.equals(hourBucket)
                     ? currentHourCount + 1
                     : 1;
@@ -32,19 +56,25 @@ public record   VelocityProfile(
             int newPeak = Math.max(peakTxPerHour, hourCount);
 
             BigDecimal newAvgHour = avgTxPerHour
-                    .multiply(BigDecimal.valueOf(samples))
+                    .multiply(BigDecimal.valueOf(this.getSamples()))
                     .add(BigDecimal.ONE)
-                    .divide(BigDecimal.valueOf(samples + 1), RoundingMode.HALF_UP);
+                    .divide(BigDecimal.valueOf(this.getSamples() + 1), RoundingMode.HALF_UP);
+ 
+             BigDecimal newAvgTxPerDay = avgTxPerDay
+                     .multiply(BigDecimal.valueOf(this.getSamples()))
+                    .add(BigDecimal.ONE)
+                    .divide(BigDecimal.valueOf(this.getSamples() + 1), RoundingMode.HALF_UP);
+                    
+                    
+                 this.avgTxPerHour=   newAvgHour;
+                 this.avgTxPerDay =  newAvgTxPerDay;
+                 this.currentHourCount=   hourCount;
+                 this.peakTxPerHour=   newPeak;
+                 this.samples=    this.getSamples() + 1;
+                 this.currentHourBucket=  txTime;
+                 this.lastUpdated=  hourBucket;
 
-            return new VelocityProfile(
-                    newAvgHour,
-                    avgTxPerDay, //TODO se hace igual pero por día
-                    hourCount,
-                    newPeak,
-                    samples + 1,
-                    txTime,
-                    hourBucket
-            );
+        
         }
 
     public boolean isBursting() {

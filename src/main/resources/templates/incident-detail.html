@@ -4,7 +4,7 @@
       xmlns:sec="https://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout}">
 <head>
-    <title>Sentinel Pay - Decisions</title>
+    <title>Sentinel Pay - Incident Details</title>
 </head>
 <body>
 
@@ -13,116 +13,328 @@
     <div class="dashboard-header mb-4">
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h1>Decision Engine</h1>
-                <p class="dashboard-subtitle">Review, filter, and audit transaction resolutions</p>
+                <h1>Incident Details</h1>
+                <p class="dashboard-subtitle">Comprehensive view of fraud incident and related information</p>
             </div>
-            <button class="btn-secondary" sec:authorize="hasRole('ROLE_ADMIN')">
-                <i class="bi bi-download me-2"></i>Export History
-            </button>
+            <div>
+                <button class="btn-secondary me-2" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <i class="bi bi-download me-2"></i>Export Report
+                </button>
+                <a th:href="@{/incidents}" class="btn-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Incidents
+                </a>
+            </div>
         </div>
     </div>
 
+    <!-- Incident Overview Card -->
     <div class="content-card mb-4">
         <div class="content-card-header">
             <h5 class="content-card-title mb-0">
-                <i class="bi bi-filter-left"></i> Filter Decisions
+                <i class="bi bi-exclamation-triangle"></i> Incident Overview
             </h5>
         </div>
         <div class="card-body p-4">
-            <form class="row g-3 align-items-end">
+            <div class="row g-4">
                 <div class="col-md-3">
-                    <label for="statusFilter" class="form-label fw-bold small text-muted">STATUS</label>
-                    <select id="statusFilter" class="form-select border-0 bg-light" th:disabled="${isReadOnly}">
-                        <option selected>All Statuses</option>
-                        <option>PENDING</option>
-                        <option>APPROVED</option>
-                        <option>REJECTED</option>
-                        <option>ESCALATED</option>
-                    </select>
+                    <label class="form-label fw-bold small text-muted">INCIDENT ID</label>
+                    <p class="id-display mb-0" th:text="${incidentDetails.incidentId}">#INC-12345</p>
                 </div>
                 <div class="col-md-3">
-                    <label for="riskLevelFilter" class="form-label fw-bold small text-muted">RISK LEVEL</label>
-                    <select id="riskLevelFilter" class="form-select border-0 bg-light" th:disabled="${isReadOnly}">
-                        <option selected>All Levels</option>
-                        <option>LOW</option>
-                        <option>MEDIUM</option>
-                        <option>HIGH</option>
-                        <option>CRITICAL</option>
-                    </select>
+                    <label class="form-label fw-bold small text-muted">STATUS</label>
+                    <p class="mb-0">
+                        <span th:text="${incidentDetails.status}"
+                              th:classappend="${incidentDetails.status == 'OPEN' ? 'badge-status-open' :
+                                             (incidentDetails.status == 'RESOLVED' ? 'badge-status-resolved' :
+                                             (incidentDetails.status == 'INVESTIGATING' ? 'badge-status-investigating' : 'badge-modern'))}"
+                              class="badge-modern">OPEN</span>
+                    </p>
                 </div>
-                <div class="col-md-4">
-                    <label for="actorFilter" class="form-label fw-bold small text-muted">ACTOR</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><i class="bi bi-person"></i></span>
-                        <input type="text" id="actorFilter" class="form-control border-0 bg-light"
-                               placeholder="Filter by actor..." th:attr="readonly=${isReadOnly}">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold small text-muted">RISK SCORE</label>
+                    <p class="mb-0">
+                        <span th:text="${incidentDetails.riskScore}"
+                              th:classappend="${incidentDetails.riskScore >= 75 ? 'badge-risk-high' :
+                                             (incidentDetails.riskScore >= 50 ? 'badge-risk-medium' : 'badge-risk-low')}"
+                              class="badge-modern fs-5">85</span>
+                    </p>
+                </div>
+                <div class="col-md-3" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <label class="form-label fw-bold small text-muted">ACTIONS</label>
+                    <div class="d-flex gap-2">
+                        <button class="btn-action btn-sm" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#escalateIncidentModal"
+                    sec:authorize="hasRole('ROLE_ADMIN')">
+                <i class="bi bi-pencil-square me-2"></i>Escalate Incident
+            </button>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn-action w-100" th:disabled="${isReadOnly}"
-                            sec:authorize="!hasRole('ROLE_READ_ONLY')">
-                        Apply Filters
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 
-    <div class="content-card">
-        <div class="content-card-header">
-            <h2 class="content-card-title">
-                <i class="bi bi-list-check"></i> All Decisions
-            </h2>
+    <div class="row">
+        <!-- Transaction Details Card -->
+        <div class="col-lg-6 mb-4">
+            <div class="content-card h-100">
+                <div class="content-card-header">
+                    <h5 class="content-card-title mb-0">
+                        <i class="bi bi-credit-card"></i> Transaction Details
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted">AMOUNT</label>
+                        <p class="fs-4 fw-bold mb-0">
+                            <span th:text="${incidentDetails.transactionDetails.Currency}">USD</span>
+                            <span th:text="${#numbers.formatDecimal(incidentDetails.transactionDetails.Amount, 1, 2)}">1,500.00</span>
+                        </p>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted">TRANSACTION TYPE</label>
+                        <p class="mb-0">
+                            <span class="badge-modern badge-status-investigating" 
+                                  th:text="${incidentDetails.transactionDetails.Type}">WITHDRAWAL</span>
+                        </p>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted">LOCATION</label>
+                        <p class="mb-0">
+                            <i class="bi bi-geo-alt text-primary me-2"></i>
+                            <span th:text="${incidentDetails.transactionDetails.Location}">New York, NY, USA</span>
+                        </p>
+                    </div>
+                    <hr>
+                    <div class="mb-0">
+                        <label class="form-label fw-bold small text-muted">TIMESTAMP</label>
+                        <p class="mb-0">
+                            <i class="bi bi-clock text-primary me-2"></i>
+                            <span th:text="${#temporals.format(incidentDetails.transactionDetails.TimeStamp, 'dd/MM/yyyy HH:mm:ss')}">25/02/2026 17:30:45</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="table-responsive">
-            <table class="modern-table w-100">
-                <thead>
-                <tr>
-                    <th>Decision ID</th>
-                    <th>Status</th>
-                    <th>Risk Level</th>
-                    <th>Actor</th>
-                    <th>Created At</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="decision : ${decisions}">
-                    <td><span class="id-display" th:text="${decision.decisionId}">#DEC-001</span></td>
-                    <td>
-                            <span th:text="${decision.status}"
-                                  th:classappend="${decision.status == 'PENDING' ? 'badge-status-open' :
-                                                 (decision.status == 'APPROVED' ? 'badge-status-resolved' :
-                                                 (decision.status == 'REJECTED' ? 'badge-risk-high' : 'badge-status-investigating'))}"
-                                  class="badge-modern"></span>
-                    </td>
-                    <td>
-                            <span th:text="${decision.riskLevel}"
-                                  th:classappend="${decision.riskLevel == 'CRITICAL' || decision.riskLevel == 'HIGH' ? 'badge-risk-high' :
-                                                 (decision.riskLevel == 'MEDIUM' ? 'badge-risk-medium' : 'badge-risk-low'))}"
-                                  class="badge-modern"></span>
-                    </td>
-                    <td class="fw-medium text-dark" th:text="${decision.actor}">System Admin</td>
-                    <td class="text-muted small" th:text="${#temporals.format(decision.createdAt, 'dd/MM/yyyy HH:mm')}">25/02/2026 17:30</td>
-                    <td>
-                        <a th:href="@{/decisions/{id}(id=${decision.decisionId})}" class="btn-link text-decoration-none">
-                            <i class="bi bi-eye me-1"></i>Details
-                        </a>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(decisions)}">
-                    <td colspan="6">
-                        <div class="empty-state">
-                            <i class="bi bi-shield-slash"></i>
-                            <p>No decisions found matching the filters.</p>
+
+        <!-- Account Snapshot Card -->
+        <div class="col-lg-6 mb-4">
+            <div class="content-card h-100">
+                <div class="content-card-header">
+                    <h5 class="content-card-title mb-0">
+                        <i class="bi bi-person-circle"></i> Account Snapshot
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted">RISK LEVEL</label>
+                        <p class="mb-0">
+                            <span th:text="${incidentDetails.accountSnapShot.riskLevel}"
+                                  th:classappend="${incidentDetails.accountSnapShot.riskLevel == 'CRITICAL' || 
+                                                   incidentDetails.accountSnapShot.riskLevel == 'HIGH' ? 'badge-risk-high' :
+                                                 (incidentDetails.accountSnapShot.riskLevel == 'MEDIUM' ? 'badge-risk-medium' : 'badge-risk-low')}"
+                                  class="badge-modern">HIGH</span>
+                        </p>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted">AVERAGE TRANSACTION AMOUNT</label>
+                        <p class="fs-5 fw-semibold mb-0">
+                            <span th:text="${#numbers.formatDecimal(incidentDetails.accountSnapShot.averageAmount, 1, 2)}">750.00</span>
+                        </p>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted">USUAL LOCATION</label>
+                        <p class="mb-0">
+                            <i class="bi bi-geo text-primary me-2"></i>
+                            <span th:text="${incidentDetails.accountSnapShot.usualLocation}">Los Angeles, CA, USA</span>
+                        </p>
+                    </div>
+                    <hr>
+                    <div class="mb-0">
+                        <label class="form-label fw-bold small text-muted">PREVIOUS INCIDENTS</label>
+                        <p class="mb-0">
+                            <span class="badge-modern" 
+                                  th:classappend="${incidentDetails.accountSnapShot.previousIntent > 5 ? 'badge-risk-high' :
+                                                 (incidentDetails.accountSnapShot.previousIntent > 2 ? 'badge-risk-medium' : 'badge-risk-low')}"
+                                  th:text="${incidentDetails.accountSnapShot.previousIntent}">3</span>
+                            <span class="text-muted small ms-2">incident(s)</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Analysis Section (Optional) -->
+    <div class="content-card" sec:authorize="hasRole('ROLE_ANALYST') or hasRole('ROLE_ADMIN')">
+        <div class="content-card-header">
+            <h5 class="content-card-title mb-0">
+                <i class="bi bi-graph-up"></i> Risk Analysis
+            </h5>
+        </div>
+        <div class="card-body p-4">
+            <div class="alert alert-info mb-0">
+                <h6 class="fw-bold mb-2">
+                    <i class="bi bi-info-circle me-2"></i>Analysis Summary
+                </h6>
+                <ul class="mb-0">
+                    <li th:if="${incidentDetails.riskScore >= 75}">
+                        <strong>High risk score detected:</strong> Transaction requires immediate attention
+                    </li>
+                    <li th:if="${incidentDetails.transactionDetails.Amount > incidentDetails.accountSnapShot.averageAmount * 2}">
+                        <strong>Unusual amount:</strong> Transaction amount significantly exceeds account average
+                    </li>
+                    <li th:if="${incidentDetails.transactionDetails.Location != incidentDetails.accountSnapShot.usualLocation}">
+                        <strong>Location anomaly:</strong> Transaction location differs from usual location
+                    </li>
+                    <li th:if="${incidentDetails.accountSnapShot.previousIntent > 0}">
+                        <strong>Account history:</strong> Account has 
+                        <span th:text="${incidentDetails.accountSnapShot.previousIntent}">0</span> previous incident(s)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<!-- Escalate Incident Modal -->
+
+<!-- Escalate Incident Modal -->
+<div class="modal fade" id="escalateIncidentModal" tabindex="-1" aria-labelledby="escalateIncidentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="escalateIncidentModalLabel">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Escalate Incident
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="escalateIncidentForm" 
+                      th:hx-patch="@{/incidents/{id}/escalate(id=${incidentDetails.incidentId})}"
+                      hx-target="#incident-updated-feedback"
+                      hx-swap="innerHTML">
+                    
+                    <!-- Incident ID (readonly) -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted">INCIDENT ID</label>
+                        <input type="text" 
+                               class="form-control border-0 bg-light" 
+                               th:value="${incidentDetails.incidentId}" 
+                               readonly>
+                    </div>
+
+                    <!-- Current Status Display -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted">CURRENT STATUS</label>
+                        <div class="alert alert-light border mb-0">
+                            <span th:text="${incidentDetails.status}"
+                                  th:classappend="${incidentDetails.status == 'OPEN' ? 'badge-status-open' :
+                                                 (incidentDetails.status == 'UNDER_REVIEW' ? 'badge-status-investigating' :
+                                                 (incidentDetails.status == 'RESOLVED' ? 'badge-status-resolved' :
+                                                 (incidentDetails.status == 'CONFIRMED_FRAUD' ? 'badge-risk-high' :
+                                                 (incidentDetails.status == 'FALSE_POSITIVE' ? 'badge-risk-low' : 'badge-modern'))))}"
+                                  class="badge-modern">OPEN</span>
                         </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                    </div>
+
+                    <!-- New Incident Status Dropdown -->
+                    <div class="mb-3">
+                        <label for="status" class="form-label fw-bold small text-muted">NEW STATUS *</label>
+                        <select class="form-select border-0 bg-light" 
+                                id="status" 
+                                name="status" 
+                                required>
+                            <option value="" disabled selected>Select new status...</option>
+                            <option value="OPEN">🟢 OPEN</option>
+                            <option value="UNDER_REVIEW">⚠️ UNDER REVIEW</option>
+                            <option value="RESOLVED">✅ RESOLVED</option>
+                            <option value="CONFIRMED_FRAUD">❌ CONFIRMED FRAUD</option>
+                            <option value="FALSE_POSITIVE">🔄 FALSE POSITIVE</option>
+                        </select>
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>Select the new status for this incident
+                        </small>
+                    </div>
+
+                    <!-- Risk Score -->
+                    <div class="mb-3">
+                        <label for="riskScore" class="form-label fw-bold small text-muted">
+                            RISK SCORE 
+                            <span class="fw-normal text-muted small">(0-300)</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0">
+                                <i class="bi bi-speedometer2 text-primary"></i>
+                            </span>
+                            <input type="number" 
+                                   class="form-control border-0 bg-light" 
+                                   id="riskScore" 
+                                   name="riskScore" 
+                                   min="0" 
+                                   max="300" 
+                                   th:value="${incidentDetails.riskScore}">
+                            <span class="input-group-text bg-light border-0">
+                                <span id="escalateRiskScoreBadge" 
+                                      th:classappend="${incidentDetails.riskScore >= 75 ? 'badge-risk-high' :
+                                                     (incidentDetails.riskScore >= 50 ? 'badge-risk-medium' : 'badge-risk-low')}"
+                                      class="badge-modern">
+                                    <span th:text="${incidentDetails.riskScore >= 80 ? 'Critical' : 
+                                                   (incidentDetails.riskScore >= 60 ? 'High' : 
+                                                   (incidentDetails.riskScore >= 40 ? 'Medium' : 'Low'))}">Medium</span>
+                                </span>
+                            </span>
+                        </div>
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>Update the risk score if needed
+                        </small>
+                    </div>
+
+                    <!-- Feedback Area - NOMBRE CORRECTO -->
+                    <div id="incident-updated-feedback"></div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>Cancel
+                </button>
+                <button type="submit" form="escalateIncidentForm" class="btn-action">
+                    <i class="bi bi-arrow-up-circle me-1"></i>Escalate Incident
+                </button>
+            </div>
         </div>
     </div>
 </div>
-
+</div>
+<script>
+    // Update risk score badge dynamically in escalate modal
+    document.addEventListener('DOMContentLoaded', function() {
+        const riskScoreInput = document.getElementById('riskScore');
+        const riskScoreBadge = document.getElementById('escalateRiskScoreBadge');
+        
+        if (riskScoreInput && riskScoreBadge) {
+            riskScoreInput.addEventListener('input', function() {
+                const score = parseInt(this.value);
+                
+                // Update badge text and class
+                if (score >= 80) {
+                    riskScoreBadge.textContent = 'Critical';
+                    riskScoreBadge.className = 'badge-modern badge-risk-high';
+                } else if (score >= 60) {
+                    riskScoreBadge.textContent = 'High';
+                    riskScoreBadge.className = 'badge-modern badge-risk-high';
+                } else if (score >= 40) {
+                    riskScoreBadge.textContent = 'Medium';
+                    riskScoreBadge.className = 'badge-modern badge-risk-medium';
+                } else {
+                    riskScoreBadge.textContent = 'Low';
+                    riskScoreBadge.className = 'badge-modern badge-risk-low';
+                }
+            });
+        }
+    });
+</script>
 </body>
 </html>

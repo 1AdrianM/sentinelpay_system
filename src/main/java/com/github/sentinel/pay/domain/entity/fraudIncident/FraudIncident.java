@@ -5,6 +5,7 @@ import com.github.sentinel.pay.domain.entity.risk.RiskScore;
 import com.github.sentinel.pay.domain.entity.shared.AccountId;
 import com.github.sentinel.pay.domain.entity.shared.ClientAccountId;
 import com.github.sentinel.pay.domain.entity.transaction.TransactionId;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,18 +24,47 @@ import java.util.UUID;
  private FraudIncidentStatus status;
  private RiskScore riskScore;
  private Instant openedAt;
+ private Instant lastUpdatedAt;
   private Instant resolvedAt;
 
   public static FraudIncidentId generateIncidentId(){
    return new FraudIncidentId(UUID.randomUUID());
   }
 
-    public static FraudIncident create(ClientAccountId clientAccountId, FraudIncidentId fraudIncidentId, TransactionId transactionId, FraudDecisionId decisionId, RiskScore riskPoint, AccountId accountId, FraudIncidentStatus status, Instant now) {
-  return new FraudIncident(fraudIncidentId,clientAccountId,transactionId,decisionId,accountId,status,riskPoint,now,null);
+    public static FraudIncident create(
+       ClientAccountId clientAccountId, 
+       FraudIncidentId fraudIncidentId, 
+       TransactionId transactionId,
+       FraudDecisionId decisionId,
+       RiskScore riskPoint,
+       AccountId accountId,
+       FraudIncidentStatus status,
+       Instant now) {
+
+
+if( clientAccountId == null ||  fraudIncidentId == null || 
+    transactionId == null ||    decisionId == null ||  riskPoint == null || 
+   accountId == null || status == null ||  now == null) {
+  
+     throw new IllegalArgumentException("All parameters must be provided and non-null");
   }
 
+  return new FraudIncident(fraudIncidentId,
+    clientAccountId,
+    transactionId,
+    decisionId,
+    accountId,
+    status,
+    riskPoint,
+    now,
+    now,
+    null);
+  }
  public void resolvedAtNow() {
    this.resolvedAt = Instant.now();
+  }
+  public void lastUpdatedAtNow() {
+   this.lastUpdatedAt = Instant.now();
   }
 
  public void changeIncidentStatus(FraudIncidentStatus fraudIncidentStatus) {

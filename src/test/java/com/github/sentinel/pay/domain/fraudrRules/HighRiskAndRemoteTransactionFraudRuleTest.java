@@ -32,16 +32,16 @@ public class HighRiskAndRemoteTransactionFraudRuleTest {
 
     @Test
       void ShouldReturnHighRiskContributionWhenTransactionTypeIsHighRiskAndRemote(){
-        Transaction tx = new Transaction(
+        Transaction tx = Transaction.create(
                 new TransactionId(java.util.UUID.randomUUID()),
                 new ClientAccountId(java.util.UUID.randomUUID()),
                 new AccountId(java.util.UUID.randomUUID()),
-                new FraudIncidentId(java.util.UUID.randomUUID()), // Added FraudIncidentId
-                TransactionType.CRYPTO_TRANSFER,
+                                                      // Added FraudIncidentId
                 new Location("RD", "SD"),
-                new Money(new BigDecimal("6000"), Currency.USD),
-                Instant.now(),
-                Channel.ONLINE // Assuming a default Channel like WEB
+                new Money(new BigDecimal("6000"), Currency.USD), 
+                TransactionType.CRYPTO_TRANSFER,
+                Channel.ONLINE,
+                 Instant.now()// Assuming a default Channel like WEB
         );
         AccountRiskProfile riskProfile = new AccountRiskProfile(
                 AccountRiskProfile.generateRiskProfileId(),
@@ -49,9 +49,9 @@ public class HighRiskAndRemoteTransactionFraudRuleTest {
                 new AccountId(java.util.UUID.randomUUID()),
                 RiskLevel.LOW,
                 null, // IncidentStatistics
-                LocationProfile.empty(),
+                LocationProfile.initial(),
                 MonetaryProfile.initial(new BigDecimal("2000")),
-                CurrencyProfile.empty(),
+                CurrencyProfile.initial(),
                 VelocityProfile.initial(),
                 1, // averageRiskScore
                 Instant.now()

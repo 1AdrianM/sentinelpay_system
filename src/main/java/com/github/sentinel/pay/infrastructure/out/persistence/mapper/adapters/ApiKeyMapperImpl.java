@@ -15,9 +15,11 @@ public class ApiKeyMapperImpl implements ApiKeyMapper {
         return ApiKeyEntity.builder()
                 .id(domainEntity.getId().id())
                 .name(domainEntity.getName())
+                .rawKey(domainEntity.getRawKey())
                 .clientAccountId(domainEntity.getClientAccountId().id())
                 .status(domainEntity.getStatus().name())
                 .hashedKey(domainEntity.getHashedKey())
+                .clientAccountId(domainEntity.getClientAccountId().id())
                 .createdAt(domainEntity.getCreatedAt())
                 .lastUsedAt(domainEntity.getLastUsedAt())
                 .build();
@@ -30,7 +32,8 @@ public class ApiKeyMapperImpl implements ApiKeyMapper {
                 .name(entityModel.getName())
                 .status(ApiKeyStatus.valueOf(entityModel.getStatus()))
                 .hashedKey(entityModel.getHashedKey())
-                .clientAccountId(new ClientAccountId(entityModel.getId()))
+                .rawKey(entityModel.getRawKey())
+                .clientAccountId(new ClientAccountId(entityModel.getClientAccountId()))
                 .lastUsedAt(entityModel.getLastUsedAt())
                 .createdAt(entityModel.getCreatedAt())
                 .build();

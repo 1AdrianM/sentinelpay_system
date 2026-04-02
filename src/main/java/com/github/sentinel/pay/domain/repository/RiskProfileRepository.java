@@ -9,18 +9,13 @@ import java.util.List;
 public interface RiskProfileRepository {
      List<AccountRiskProfile> findAllOrderByRiskScoreDesc();
 
-    AccountRiskProfile findOrCreateByAccountId(AccountId accountId);
     AccountRiskProfile update(AccountRiskProfile accountRiskProfile);
-   CurrencyProfile findCurrencyProfileByRiskProfileId(RiskProfileId id);
-
-  VelocityProfile findVelocityProfileByRiskProfileId(RiskProfileId id);
-   MonetaryProfile findMonetaryProfileByRiskProfileId(RiskProfileId id);
-   LocationProfile findLocationProfileByRiskProfileId(RiskProfileId id);
-
 
     int findByHighAndRestrictedAccountCount(ClientAccountId clientAccountId);
 
     List<AccountRiskProfile> findLastFiveRiskProfileAccounts(ClientAccountId clientAccountId);
 
-    AccountRiskProfile findByAccountId(AccountId accountId);
+    java.util.Optional<AccountRiskProfile> findByAccountId(AccountId accountId);
+
+    AccountRiskProfile save(AccountRiskProfile riskProfile);
 }

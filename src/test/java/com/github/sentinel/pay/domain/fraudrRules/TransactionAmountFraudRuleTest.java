@@ -34,26 +34,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TransactionAmountFraudRuleTest {
     @Test
     void  shouldReturnHighRiskWhenTransactionAmountExceedsAverage(){
-         Transaction tx = new Transaction(
+         Transaction tx = Transaction.create(
                 new TransactionId(java.util.UUID.randomUUID()),
                 new ClientAccountId(java.util.UUID.randomUUID()),
                 new AccountId(java.util.UUID.randomUUID()),
-                new FraudIncidentId(java.util.UUID.randomUUID()),
-                TransactionType.ONLINE_PAYMENT,
                 new Location("RD","SD"),
                 new Money(new BigDecimal("6090"), Currency.USD),
-                Instant.now(),
-                Channel.ONLINE
+              TransactionType.ONLINE_PAYMENT,
+                Channel.ONLINE,
+                Instant.now()
          );
+         
          AccountRiskProfile riskProfile = new AccountRiskProfile(
                 AccountRiskProfile.generateRiskProfileId(),
                 new ClientAccountId(java.util.UUID.randomUUID()),
                 new AccountId(java.util.UUID.randomUUID()),
                 RiskLevel.LOW,
                 null, // IncidentStatistics
-                LocationProfile.empty(),
+                LocationProfile.initial(),
                 MonetaryProfile.initial(new BigDecimal("2000")),
-                CurrencyProfile.empty(),
+                CurrencyProfile.initial(),
                 VelocityProfile.initial(),
                 1, // averageRiskScore
                 Instant.now()

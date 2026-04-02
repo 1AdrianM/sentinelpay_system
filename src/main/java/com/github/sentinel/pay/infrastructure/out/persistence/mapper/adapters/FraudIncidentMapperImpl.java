@@ -5,8 +5,11 @@ import com.github.sentinel.pay.domain.entity.fraudIncident.FraudIncidentId;
 import com.github.sentinel.pay.domain.entity.fraudDecision.FraudDecisionId;
 import com.github.sentinel.pay.domain.entity.risk.RiskScore;
 import com.github.sentinel.pay.domain.entity.shared.AccountId;
+import com.github.sentinel.pay.domain.entity.shared.ClientAccountId;
 import com.github.sentinel.pay.domain.entity.transaction.TransactionId;
+import com.github.sentinel.pay.infrastructure.out.persistence.EntityModels.FraudDecisionEntity;
 import com.github.sentinel.pay.infrastructure.out.persistence.EntityModels.FraudIncidentEntity;
+import com.github.sentinel.pay.infrastructure.out.persistence.EntityModels.TransactionEntity;
 import com.github.sentinel.pay.infrastructure.out.persistence.mapper.FraudIncidentMapper;
 import org.springframework.stereotype.Component;
 
@@ -15,12 +18,23 @@ public class FraudIncidentMapperImpl implements FraudIncidentMapper {
     @Override
     public FraudIncidentEntity domainEntityToEntityModel(FraudIncident domainEntity) {
         return FraudIncidentEntity.builder()
-                .incidentId(domainEntity.getIncidentId().id())
-                .fraudDecisionId(domainEntity.getFraudDecisionId().id())
+                .id(domainEntity.getIncidentId().id())
+                .transaction(
+                    TransactionEntity
+                    .builder()
+                    .id(domainEntity.getTransactionId().id())
+                    .build()
+                )
+                .clientAccountId(domainEntity.getClientAccountId().id())
+                .accountId(domainEntity.getAccountId().id())
+                .decision( 
+                     FraudDecisionEntity.builder()
+                    .id(domainEntity.getFraudDecisionId().id()).build()
+                )
                 .status(domainEntity.getStatus())
-                .transactionId(domainEntity.getTransactionId().id())
                 .riskScore(domainEntity.getRiskScore().value())
                 .openedAt(domainEntity.getOpenedAt())
+                .lastUpdatedAt(domainEntity.getLastUpdatedAt())
                 .resolvedAt(domainEntity.getResolvedAt())
                 .build();
     }
@@ -28,13 +42,22 @@ public class FraudIncidentMapperImpl implements FraudIncidentMapper {
     @Override
     public FraudIncident EntityModelToDomainEntity(FraudIncidentEntity entityModel) {
         return FraudIncident.builder()
-                .incidentId(new FraudIncidentId(entityModel.getIncidentId()))
-                .fraudDecisionId(new FraudDecisionId(entityModel.getFraudDecisionId()))
-                .transactionId(new TransactionId(entityModel.getTransactionId()))
-                .accountId(new AccountId(entityModel.getAccountId()))
+                .incidentId( FraudIncidentId.of(entityModel.getId()))
+                .clientAccountId(
+                    ClientAccountId
+                    .of(entityModel.getClientAccountId()))
+                .fraudDecisionId( 
+                    FraudDecisionId
+                    .of(entityModel
+                    .getFraudDecisionId()))
+                .transactionId(
+                    TransactionId
+                    .of(entityModel.getTransactionId()))
+                .accountId(AccountId.of(entityModel.getAccountId()))
                 .status(entityModel.getStatus())
-                .riskScore(new RiskScore(entityModel.getRiskScore()))
+                .riskScore(RiskScore.of(entityModel.getRiskScore()))
                 .openedAt(entityModel.getOpenedAt())
+                .lastUpdatedAt(entityModel.getLastUpdatedAt())
                 .resolvedAt(entityModel.getResolvedAt())
                 .build();
     }

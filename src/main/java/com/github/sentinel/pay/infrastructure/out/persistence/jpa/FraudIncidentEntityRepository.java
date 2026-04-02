@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public interface FraudIncidentEntityRepository extends EntityRepository<FraudIncidentEntity, UUID> {
 
-     FraudIncidentEntity findByTransactionIdAndStatus(UUID transactionId,
+     List<FraudIncidentEntity> findIncidentsByTransactionIdAndStatus(UUID transactionId,
                                                       FraudIncidentStatus status);
 
     List<FraudIncidentEntity> findByAccountIdAndStatus(
@@ -46,6 +46,15 @@ public interface FraudIncidentEntityRepository extends EntityRepository<FraudInc
                  """
          )
          List<FraudIncidentEntity> findAllConfirmedFraudIncidents (UUID clientAccountId);
+         
+         @Query("""
+                  SELECT i
+                 FROM FraudIncidentEntity i
+                 WHERE i.status='OPEN'
+                 AND   i.clientAccountId=:clientAccountId
+                 """
+         )
+         List<FraudIncidentEntity> findAllOpenFraudIncidents (UUID clientAccountId);
     @Query("""
                   SELECT i
                  FROM FraudIncidentEntity i
@@ -54,4 +63,8 @@ public interface FraudIncidentEntityRepository extends EntityRepository<FraudInc
                  """
     )
     Page<FraudIncidentEntity> findAllByAccountId(AccountId accountID, Pageable pageable);
+
+    FraudIncidentEntity findIncidentByTransactionIdAndStatus(UUID id, FraudIncidentStatus open);
+
+    List<FraudIncidentEntity> findByDecision_Id(UUID id);
 }

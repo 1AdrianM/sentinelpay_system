@@ -26,8 +26,17 @@ public record RiskScore(
     public static RiskScore from(List<FraudSignal> contributionScore) {
         return new RiskScore(contributionScore.stream().mapToInt(FraudSignal::score).sum());
     }
+    
     public boolean isRestrictedScore(){return this.value > RESTRICTED_SCORE;}
     public boolean isHighRisk(){return this.value >= HIGH_RISK_SCORE  &&  this.value < RESTRICTED_SCORE;}
     public boolean isMediumRisk(){return this.value >= MEDIUM_RISK_SCORE && this.value < HIGH_RISK_SCORE;}
     public boolean isLowRisk(){return this.value >= LOW_RISK_SCORE && this.value < MEDIUM_RISK_SCORE;}
+    public static RiskScore of(int riskScore) {
+        return new RiskScore(riskScore);
+    }
+
+    public static RiskScore fromRejected() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'fromRejected'");
+    }
 }

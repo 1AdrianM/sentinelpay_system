@@ -1,5 +1,4 @@
 package com.github.sentinel.pay.domain.entity.risk;
-import lombok.Builder;
 
 /**
  * Representa una señal individual de riesgo detectada por el motor de reglas.
@@ -19,6 +18,8 @@ public record FraudSignal(
             String ruleName,
             String detail
     ) {
+
+        System.out.println("Creating FraudSignal with magnitude: "+magnitude+" impact: "+impact+" rule: "+ruleName);
         return new FraudSignal(
                 magnitude.getScore(),
                 impact.getWeight(),

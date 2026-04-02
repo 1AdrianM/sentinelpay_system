@@ -8,5 +8,5 @@ public enum RiskImpactScale {
 
     private final double weight;
     RiskImpactScale(double weight) { this.weight = weight; }
-    public double getWeight() { return weight; }
+    public double getWeight() { return this.weight; }
 }

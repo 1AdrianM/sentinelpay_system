@@ -11,10 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -45,6 +42,7 @@ public class SecurityConfig {
                             .requestMatchers("/signin", "/signup", "/do-signin", "/do-signup").permitAll()
                             .requestMatchers("/css/**", "/js/**", "/webjars/**", "/.well-known/**").permitAll()
                             .requestMatchers( "/admin/**").hasRole(UserRole.TENANT_ADMIN.name())
+                            .requestMatchers("/actuator/**").hasRole(UserRole.READ_ONLY.name())
 
 
                             .anyRequest().authenticated()
@@ -52,7 +50,7 @@ public class SecurityConfig {
                     .formLogin(form -> form
                             .loginPage("/signin")
                             .loginProcessingUrl("/do-signin")
-                            .defaultSuccessUrl("/")
+                            .defaultSuccessUrl("/",true)
                             .failureUrl("/signin?error=true")
                             .permitAll()
                     )

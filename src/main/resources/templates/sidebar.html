@@ -155,7 +155,7 @@
 
     <div class="sidebar-brand">
         <div class="brand-icon">S</div>
-        <span>SpringUI Pro</span>
+        <span>Sentinel Pay</span>
     </div>
 
     <ul class="nav-sidebar">
@@ -195,37 +195,43 @@
                 API Keys
             </a>
         </li>
-
-        <li class="sidebar-heading">Reports</li>
-
+        <li class="sidebar-heading">Documentation</li>
         <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i data-feather="bar-chart-2"></i>
-                Current month
+            <a class="nav-link" href="/api-docs">
+                <i data-feather="book-open"></i>
+                API Documentation
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i data-feather="archive"></i>
-                Historical Data
-            </a>
-        </li>
+
     </ul>
 
     <div class="sidebar-footer">
-        <div class="user-profile">
-            <div class="user-avatar">JD</div>
-            <div class="user-info">
-                <span class="user-name">John Doe</span>
-                <span class="user-role">Administrator</span>
-            </div>
+       
+    <div class="user-profile" th:if="${currentUser != null}">
+        <div class="user-avatar" 
+             th:text="${#strings.substring(currentUser.principal.email, 0, 1).toUpperCase()}">
+            U
         </div>
+        
+        <div class="user-info">
+            <span class="user-name" th:text="${currentUser.principal.email}">
+                user@example.com
+            </span>
+            
+            <span class="user-role" th:text="${currentUser.principal.role}">
+                Administrator
+            </span>
+        </div>
+    </div>
+
 
         <a class="logout-btn" href="/logout">
             <i data-feather="log-out"></i>
             Logout
         </a>
     </div>
+
+    
 </div>
 
 <script>

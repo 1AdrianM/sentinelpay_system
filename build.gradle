@@ -10,7 +10,7 @@ description = 'Demo project for Spring Boot'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
@@ -25,6 +25,9 @@ repositories {
 }
 
 dependencies {
+	    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.postgresql:postgresql:42.7.7'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -32,6 +35,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
+	implementation 'com.bucket4j:bucket4j_jdk17-core:8.15.0'
 	//runtimeOnly 'com.h2database:h2'
 	implementation('org.webjars.npm:htmx.org:2.0.8')
 	implementation 'org.webjars:bootstrap:5.3.2'
@@ -40,6 +44,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	 // Required: The SLF4J API
 }
 
 tasks.named('test') {

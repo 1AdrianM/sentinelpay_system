@@ -19,6 +19,7 @@ public class ApiKey {
     private ClientAccountId clientAccountId;
     private Set<ApiScope> scope;
     private String hashedKey;
+    private String rawKey;
     private ApiKeyStatus status;
     private Instant createdAt;
     private Instant lastUsedAt;
@@ -44,9 +45,10 @@ public class ApiKey {
                 clientAccountId,
                  new HashSet<>(),
                  hashedApiKey,
+                 raw,
                 ApiKeyStatus.ACTIVE,
                 Instant.now(),
-                null
+                null    
         );
     }
 }

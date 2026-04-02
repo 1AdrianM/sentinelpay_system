@@ -2,9 +2,15 @@ package com.github.sentinel.pay.infrastructure.out.persistence.mapper.adapters;
 
 import com.github.sentinel.pay.domain.entity.fraudDecision.FraudDecision;
 import com.github.sentinel.pay.domain.entity.fraudDecision.FraudDecisionId;
+import com.github.sentinel.pay.domain.entity.fraudIncident.FraudIncident;
+import com.github.sentinel.pay.domain.entity.fraudIncident.FraudIncidentId;
 import com.github.sentinel.pay.domain.entity.risk.RiskScore;
+import com.github.sentinel.pay.domain.entity.shared.AccountId;
+import com.github.sentinel.pay.domain.entity.shared.ClientAccountId;
 import com.github.sentinel.pay.domain.entity.transaction.TransactionId;
 import com.github.sentinel.pay.infrastructure.out.persistence.EntityModels.FraudDecisionEntity;
+import com.github.sentinel.pay.infrastructure.out.persistence.EntityModels.FraudIncidentEntity;
+import com.github.sentinel.pay.infrastructure.out.persistence.EntityModels.TransactionEntity;
 import com.github.sentinel.pay.infrastructure.out.persistence.mapper.FraudDecisionMapper;
 import org.springframework.stereotype.Component;
 
@@ -14,11 +20,16 @@ public class FraudDecisionMapperImpl implements FraudDecisionMapper {
     public FraudDecisionEntity domainEntityToEntityModel(FraudDecision domainEntity) {
 
         return FraudDecisionEntity.builder()
-                .fraudDecisionId(domainEntity.getFraudDecisionId().id())
+                .id(domainEntity.getFraudDecisionId().id())
+            .transaction(
+                TransactionEntity
+                .builder()
+                .id(domainEntity.getTransactionId().id())
+                .build())
                 .fraudDecisionType(domainEntity.getFraudDecisionType())
                 .accountId(domainEntity.getAccountId().id())
+                .clientAccountId(domainEntity.getClientAccountId().id())
                 .Description(domainEntity.getDescription())
-                .transactionId(domainEntity.getTransactionId().id())
                 .issuedAt(domainEntity.getIssuedAt())
                 .riskPoint(domainEntity.getRiskPoint().value())
                 .modifiedAt(domainEntity.getModifiedAt())
@@ -28,10 +39,12 @@ public class FraudDecisionMapperImpl implements FraudDecisionMapper {
     @Override
     public FraudDecision EntityModelToDomainEntity(FraudDecisionEntity entityModel) {
         return FraudDecision.builder()
-                .fraudDecisionId(new FraudDecisionId(entityModel.getFraudDecisionId()))
+                .fraudDecisionId(FraudDecisionId.of(entityModel.getId()))
+                .transactionId(TransactionId.of(entityModel.getTransactionId()))
                 .fraudDecisionType(entityModel.getFraudDecisionType())
+                .accountId(AccountId.of(entityModel.getAccountId()))
+                .clientAccountId(ClientAccountId.of(entityModel.getClientAccountId()))
                 .description(entityModel.getDescription())
-                 .transactionId(new TransactionId(entityModel.getTransactionId()))
                 .riskPoint(new RiskScore(entityModel.getRiskPoint()))
                 .issuedAt(entityModel.getIssuedAt())
                 .modifiedAt(entityModel.getModifiedAt())

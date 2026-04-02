@@ -1,7 +1,5 @@
 package com.github.sentinel.pay.infrastructure.out.persistence.EntityModels;
 
-import com.github.sentinel.pay.domain.entity.auth.user.UserRole;
-import com.github.sentinel.pay.domain.entity.shared.ClientAccountId;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

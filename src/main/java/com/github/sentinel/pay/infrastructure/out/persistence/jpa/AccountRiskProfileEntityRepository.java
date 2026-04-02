@@ -3,6 +3,9 @@ package com.github.sentinel.pay.infrastructure.out.persistence.jpa;
 
 import com.github.sentinel.pay.infrastructure.out.persistence.EntityModels.AccountRiskProfileEntity;
  import com.github.sentinel.pay.infrastructure.out.persistence.jpa.generic.EntityRepository;
+
+
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -14,6 +17,7 @@ import java.util.UUID;
 
 public interface AccountRiskProfileEntityRepository extends EntityRepository<AccountRiskProfileEntity, UUID>{
 
+    @EntityGraph(attributePaths = {"currencyProfileEntity","locationProfileEntity","monetaryProfileEntity","velocityProfileEntity","IncidentStatistics"})
     Optional<AccountRiskProfileEntity> findByAccountId(UUID accountId);
 
     List<AccountRiskProfileEntity> findAllByOrderByAverageRiskScoreDesc();
@@ -33,6 +37,7 @@ public interface AccountRiskProfileEntityRepository extends EntityRepository<Acc
     WHERE r.clientAccountId = :clientAccountId
     ORDER BY r.lastUpdated DESC
 """)
+    @EntityGraph(attributePaths = {"currencyProfileEntity","locationProfileEntity","monetaryProfileEntity","velocityProfileEntity","IncidentStatistics"})
     List<AccountRiskProfileEntity> findLastRiskProfiles(
             @Param("clientAccountId") UUID clientAccountId,
           Pageable pageable);

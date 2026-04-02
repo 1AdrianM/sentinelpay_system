@@ -1,28 +1,28 @@
 package com.github.sentinel.pay.application.dto.decision;
 
 import com.github.sentinel.pay.application.dto.incidents.IncidentDTO;
-import com.github.sentinel.pay.application.dto.riskProfile.AccountDTO;
+ import com.github.sentinel.pay.application.dto.transaction.TransactionDetails;
+
 import lombok.Builder;
-import lombok.Data;
+ import lombok.Getter;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-@Data
+@Getter
 @Builder
 public class FraudDecisionDetailsDto {
     private UUID decisionId;
-    private String status;
-    private String riskLevel;
+    private String decisionType;
     private String actor;
-    private Instant createdAt;
-    private Instant updatedAt;
+    private Instant issuedAt;
+    private Instant modifiedAt;
     private String description;
 
     private List<IncidentDTO> linkedIncidents;
-    private List<AccountDTO> relatedAccounts;
-    private List<AuditEventDTO> auditTimeline;
+    private TransactionDetails transactionDetails;
+    private List<AuditEventDto> auditTimeline;
 
 
 }

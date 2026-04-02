@@ -1,5 +1,7 @@
 package com.github.sentinel.pay.domain.entity.fraudDecision;
 
+import com.github.sentinel.pay.domain.entity.fraudIncident.FraudIncident;
+import com.github.sentinel.pay.domain.entity.fraudIncident.FraudIncidentId;
 import com.github.sentinel.pay.domain.entity.risk.RiskScore;
 import com.github.sentinel.pay.domain.entity.shared.AccountId;
 import com.github.sentinel.pay.domain.entity.shared.ClientAccountId;
@@ -31,7 +33,7 @@ import java.util.UUID;
      if (!description.isEmpty()|| !description.isBlank()) this.description = description;
      if(modifiedAt !=null)this.modifiedAt = modifiedAt;
     }
-    public static FraudDecision create(FraudDecisionId fraudDecisionId,ClientAccountId clientAccountId, AccountId accountId, Instant now, TransactionId transactionId, FraudDecisionType decisionType,RiskScore score) {
-return new FraudDecision(fraudDecisionId, clientAccountId,transactionId,score,decisionType,accountId,"",now,now);
+    public static FraudDecision create(FraudDecisionId fraudDecisionId,ClientAccountId clientAccountId, AccountId accountId, Instant now, TransactionId transactionId, FraudDecisionType decisionType,RiskScore score, String description) {
+        return new FraudDecision(fraudDecisionId, clientAccountId,transactionId,score,decisionType,accountId,description,now,now);
     }
 }

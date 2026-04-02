@@ -15,7 +15,8 @@
                 <h1>Fraud Incidents</h1>
                 <p class="dashboard-subtitle">Real-time fraud detection and monitoring system</p>
             </div>
-            <button class="btn-action" sec:authorize="!hasRole('ROLE_READ_ONLY')">
+            <button class="btn-action" 
+             sec:authorize="!hasRole('ROLE_READ_ONLY')">
                 <i class="bi bi-plus-circle me-2"></i>New Incident
             </button>
         </div>
@@ -83,7 +84,7 @@
                     <th>Transaction ID</th>
                     <th>Risk Score</th>
                     <th>Status</th>
-                    <th>Created At</th>
+                    <th>Opened At</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -107,7 +108,7 @@
                               class="badge-modern"></span>
                     </td>
 
-                    <td class="text-muted small" th:text="${#temporals.format(incident.createdAt, 'dd/MM/yyyy HH:mm')}">25/02/2026 17:30</td>
+                    <td class="text-muted small" th:text="${#temporals.format(incident.openedAt, 'dd/MM/yyyy HH:mm')}">25/02/2026 17:30</td>
 
                     <td>
                         <a th:href="@{/incidents/{id}(id=${incident.incidentId})}" class="btn-link text-decoration-none">

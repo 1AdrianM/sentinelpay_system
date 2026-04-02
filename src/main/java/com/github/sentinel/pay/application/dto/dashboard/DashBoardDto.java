@@ -9,11 +9,11 @@ import java.util.List;
 @Builder
 public class DashBoardDto {
       public  int totalTxPerDay;
-       public int openIncidents;
+      public int openIncidents;
       public   int confirmedFrauds;
       public   int highRestrictedAccounts;
-          public   List<IncidentResponseDto> openFraudDtoList;
-         public    List<RiskProfileDto> toFiveRiskProfileDtoList;
-        public     List<FraudDecisionDto> latestFraudDecisionList;
+      public   List<IncidentResponseDto> openFraudDtoList;
+      public    List<RiskProfileDto> toFiveRiskProfileDtoList;
+      public     List<FraudDecisionDto> latestFraudDecisionList;
 
 }

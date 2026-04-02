@@ -8,9 +8,13 @@ import java.time.Instant;
 @Builder
 @Getter
 public class FraudDecisionDto {
-    String decisionId;
-    String accountId;
-    String decisionType;
-    Instant createdAt;
-    String description;
+    public String decisionId;
+    public String accountId;
+    public String status;
+   public String decisionType;
+   public String actor;
+   //public String riskLevel;
+   public Instant createdAt;
+   public Instant modifiedAt;
+   public String description;
 }

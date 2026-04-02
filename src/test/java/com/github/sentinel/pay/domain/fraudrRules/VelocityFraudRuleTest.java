@@ -37,30 +37,31 @@ public class VelocityFraudRuleTest {
         lastHourTx.add(instant.plus(Duration.ofSeconds(15)));
         lastHourTx.add(instant.plus(Duration.ofSeconds(120)));
 
+                var profileId= AccountRiskProfile.generateRiskProfileId();
 
         AccountRiskProfile riskProfile = new AccountRiskProfile(
-                AccountRiskProfile.generateRiskProfileId(),
+                profileId,
                 new ClientAccountId(java.util.UUID.randomUUID()),
                 new AccountId(java.util.UUID.randomUUID()),
                 RiskLevel.LOW,
                 null, // IncidentStatistics
-                LocationProfile.empty(),
+                LocationProfile.initial(),
                 MonetaryProfile.initial(new BigDecimal("2000")),
-                CurrencyProfile.empty(),
+                CurrencyProfile.initial(),
                 VelocityProfile.initial(),
                 1, // averageRiskScore
                 Instant.now()
         );
-        Transaction tx = new Transaction(
+        Transaction tx =  Transaction.create(
                 new TransactionId(java.util.UUID.randomUUID()),
                 new ClientAccountId(java.util.UUID.randomUUID()),
                 new AccountId(java.util.UUID.randomUUID()),
-                new FraudIncidentId(java.util.UUID.randomUUID()),
-                TransactionType.CRYPTO_TRANSFER,
                 new Location("RD","SD"),
                 new Money(new BigDecimal("6000"), Currency.USD),
-                lastHourTx.getLast().plus(Duration.ofMinutes(2)),
-                Channel.ONLINE
+                TransactionType.CRYPTO_TRANSFER,
+                Channel.ONLINE,
+               lastHourTx.getLast().plus(Duration.ofMinutes(2))
+
         );
 
         TransactionVelocityFraudRule rule = new TransactionVelocityFraudRule();

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -18,12 +19,16 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionEntity {
-    @Id private UUID transactionId;
-    private UUID accountId;
-    private UUID fraudIncidentId;
+
+    @Id private UUID id;
+    @Column(nullable = false)
+    private UUID accountId; //relationship
     @Column(nullable = false)
     private UUID clientAccountId;
+
+    @Enumerated(value = EnumType.STRING)
     private TransactionType transactionType;
+
      private BigDecimal amount;
     private String currency;
     private Instant timestamp;
@@ -32,4 +37,11 @@ public class TransactionEntity {
      private String channel;
      @Column(name = "confirmed_fraud")
      private boolean confirmedFraud;
+
+     @OneToMany(mappedBy = "transaction", fetch = FetchType.LAZY)
+     private List<FraudIncidentEntity> fraudIncidents;
+
+     @OneToMany(mappedBy="transaction", fetch = FetchType.LAZY)
+     private List<FraudDecisionEntity> fraudDecisions;
+
 }

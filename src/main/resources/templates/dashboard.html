@@ -124,10 +124,10 @@
                         </span>
                         </td>
                         <td>
-                        <span th:class="${incident.riskScore >= 80} ? 'badge-modern badge-risk-critical' :
-                                        ${incident.riskScore >= 60} ? 'badge-modern badge-risk-high' :
-                                        ${incident.riskScore >= 40} ? 'badge-modern badge-risk-medium' :
-                                        'badge-modern badge-risk-low'"
+                        <span th:class="${incident.riskScore >= 80 ? 'badge-modern badge-risk-critical' :
+                                        incident.riskScore >= 60 ? 'badge-modern badge-risk-high' :
+                                        incident.riskScore >= 40 ? 'badge-modern badge-risk-medium' :
+                                        'badge-modern badge-risk-low'}"
                               th:text="${incident.riskScore}">
                             75
                         </span>
@@ -143,9 +143,9 @@
                         </span>
                         </td>
                         <td>
-                            <button class="btn-link">
+                            <a class="btn-link" th:href="@{/incidents/{id}(id=${incident.incidentId})}">
                                 <i class="bi bi-eye"></i> View Details
-                            </button>
+                            </a>
                         </td>
                     </tr>
                     </tbody>
@@ -176,11 +176,10 @@
                                 <i class="bi bi-person-badge"></i>
                                 <span th:text="${profile.riskProfileId}">RP-2024-001</span>
                             </span>
-                                <span th:class="${profile.riskLevel == 'CRITICAL'} ? 'badge-modern badge-risk-critical' :
-                                           ${profile.riskLevel == 'HIGH'} ? 'badge-modern badge-risk-high' :
-                                           ${profile.riskLevel == 'MEDIUM'} ? 'badge-modern badge-risk-medium' :
-                                           'badge-modern badge-risk-low'"
-                                      th:text="${profile.riskLevel}">
+                                <span th:class="${profile.riskLevel == 'CRITICAL' ? 'badge-modern badge-risk-critical' :
+           profile.riskLevel == 'HIGH' ? 'badge-modern badge-risk-high' :
+           profile.riskLevel == 'MEDIUM' ? 'badge-modern badge-risk-medium' :
+           'badge-modern badge-risk-low'}">
                                 High
                             </span>
                             </div>
@@ -189,9 +188,8 @@
                             </div>
                             <div class="risk-profile-incidents">
                                 <i class="bi bi-exclamation-circle"></i>
-                                <span th:text="${#lists.size(profile.incidentResponseDtoList)} + ' related incident(s)'">
-                                3 related incidents
-                            </span>
+                                <span th:text="${profile.incidentResponseDtoList != null ? #lists.size(profile.incidentResponseDtoList) : 0}"></span>
+                        
                             </div>
                         </div>
                         <div th:if="${#lists.isEmpty(dashboard.toFiveRiskProfileDtoList)}" class="empty-state">
@@ -231,12 +229,16 @@
                                     <span class="id-display" th:text="${#strings.substring(decision.accountId, 0, 8)}">acc-123</span>
                                 </td>
                                 <td>
-                                <span th:class="${decision.decisionType == 'APPROVED'} ? 'badge-modern badge-decision-approved' :
-                                               ${decision.decisionType == 'REJECTED'} ? 'badge-modern badge-decision-rejected' :
-                                               'badge-modern badge-decision-review'"
-                                      th:text="${decision.decisionType}">
-                                    Approved
-                                </span>
+                                     
+    <span th:class="${decision.decisionType == 'APPROVED' ? 
+                 'badge-modern badge-decision-approved' : 
+                 decision.decisionType == 'FRAUD_SUSPECTED' ? 
+                 'badge-modern badge-decision-rejected' : 
+                 'badge-modern badge-decision-review'}"
+      th:text="${decision.decisionType}">
+    Approved
+</span>
+                                
                                 </td>
                                 <td th:text="${#temporals.format(decision.createdAt, 'MMM dd, HH:mm')}">
                                     Jan 15, 14:32
