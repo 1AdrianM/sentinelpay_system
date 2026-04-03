@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Fragments</title>
-</head>
 <body>
-
-<!-- fragments/alert.html -->
-<div th:fragment="alert" th:if="${message}">
-    <div th:class="'alert alert-' + ${messageType} + ' alert-dismissible fade show'" role="alert">
-        <span th:text="${message}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div th:fragment="alert" th:if="${message}">
+        <div th:classappend="${messageType == 'success' ? 'alert-success border-success' : 'alert-danger border-danger'}" 
+             class="alert mb-0" role="alert">
+            <div class="d-flex align-items-center">
+                <i th:classappend="${messageType == 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'}" 
+                   class="bi me-2 fs-5"></i>
+                <div>
+                    <strong th:text="${messageType == 'success' ? 'Success!' : 'Error!'}"></strong>
+                    <span th:text="${message}"></span>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 </body>
 </html>

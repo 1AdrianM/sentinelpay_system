@@ -38,6 +38,8 @@ public class SecurityConfig {
                     .sessionManagement(session ->
                             session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                     )
+                    .authorizeHttpRequests(health->health.requestMatchers("/api/health").permitAll()
+                )
                     .authorizeHttpRequests(auth -> auth
                             .requestMatchers("/signin", "/signup", "/do-signin", "/do-signup").permitAll()
                             .requestMatchers("/css/**", "/js/**", "/webjars/**", "/.well-known/**").permitAll()

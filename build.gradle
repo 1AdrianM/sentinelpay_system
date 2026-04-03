@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.9'
 	id 'io.spring.dependency-management' version '1.1.7'
+ 
 }
 
 group = 'com.github'
@@ -49,4 +50,20 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+// 1. Set the Server Port (Application Argument)
+bootRun {
+    if (project.hasProperty('appPort')) {
+        args = ["--server.port=${project.appPort}"]
+    }
+    
+    // 2. Set Memory (JVM Arguments)
+    if (project.hasProperty('appJvmArgs')) {
+        jvmArgs = project.appJvmArgs.split("\\s+")
+    }
+}
+
+// 3. Set Linting (Compiler Argument)
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked"
 }

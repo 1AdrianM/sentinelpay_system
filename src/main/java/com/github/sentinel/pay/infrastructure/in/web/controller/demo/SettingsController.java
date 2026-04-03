@@ -8,6 +8,7 @@ import com.github.sentinel.pay.application.usecases.CreateApiKeyUseCase;
 import com.github.sentinel.pay.application.usecases.DeleteApiKeyUseCase;
 import com.github.sentinel.pay.application.usecases.ListApiKeyByUserIdUseCase;
 import com.github.sentinel.pay.application.usecases.LoadClienAccountIdDataUseCase;
+import com.github.sentinel.pay.application.usecases.UpdatePasswordUseCase;
 import com.github.sentinel.pay.application.usecases.UpdateUserUseCase;
 import com.github.sentinel.pay.domain.entity.auth.apiKey.ApiKey;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SettingsController {
     private final UpdateUserUseCase updateUserUseCase;
+    private final UpdatePasswordUseCase updatePasswordUseCase;
     private final DeleteApiKeyUseCase deleteApiKeyUseCase;
     private final CreateApiKeyUseCase createApiKeyUseCase;
     private final ListApiKeyByUserIdUseCase listApiKeyUseCase;
@@ -70,6 +72,57 @@ public class SettingsController {
         return "fragments/alert :: alert";
     }
 
+    /**
+ * POST /settings/password - Actualizar contraseña
+ */
+@PostMapping("/settings/password")
+@ResponseBody
+public String updatePassword(
+        @RequestParam String currentPassword,
+        @RequestParam String newPassword,
+        @RequestParam String confirmPassword) {
+    try {
+        // Validar que las contraseñas coincidan
+        if (!newPassword.equals(confirmPassword)) {
+            return """
+                <div class="alert alert-danger border-danger mb-0" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                        <div>
+                            <strong>Error!</strong> Passwords do not match.
+                        </div>
+                    </div>
+                </div>
+                """;
+        }
+        
+        // Llamar al use case
+        updatePasswordUseCase.execute(currentPassword, newPassword);
+        
+        return """
+            <div class="alert alert-success border-success mb-0" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+                    <div>
+                        <strong>Success!</strong> Password updated successfully.
+                    </div>
+                </div>
+            </div>
+            """;
+            
+    } catch (Exception e) {
+        return """
+            <div class="alert alert-danger border-danger mb-0" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                    <div>
+                        <strong>Error!</strong> Failed to update password: %s
+                    </div>
+                </div>
+            </div>
+            """.formatted(e.getMessage());
+    }
+}
     /**
      * POST /settings/api-keys - Crear nueva API Key
      * HTMX retorna el fragmento HTML de la nueva key

@@ -29,6 +29,10 @@ public class GetDecisionsByClientAccountIdInteractor implements GetDecisionsByCl
 
              logger.atInfo().log("Retrieved tenant context with client account ID: {}", clientAccountId);
     List<FraudDecision> fraudDecisions=  fraudDecisionRepository.findAllByClientAccountId(clientAccountId,pageable);
+     if (fraudDecisions.isEmpty()){
+        return List.of();
+     }
+
 logger.atInfo().log("Retrieved {} fraud decisions for client account ID: {}", fraudDecisions.size(), clientAccountId);
 
 return fraudDecisions
