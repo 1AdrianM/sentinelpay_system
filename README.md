@@ -1,71 +1,93 @@
-# SentinelPay 🛡️
+# 🛡️ SentinelPay | Real-Time Fraud Detection System
 
-SentinelPay is a backend system designed to evaluate banking transactions in real time, detect potentially fraudulent activity, and manage fraud incidents through a rule-based risk engine.
+[![Java](https://img.shields.io/badge/Java-17%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![HTMX](https://img.shields.io/badge/HTMX-2.0.0-3D72D7?style=for-the-badge&logo=htmx&logoColor=white)](https://htmx.org/)
+[![Architecture](https://img.shields.io/badge/Architecture-Hexagonal%20%2B%20DDD-blueviolet?style=for-the-badge)](https://en.wikipedia.org/wiki/Hexagonal_architecture_(software))
 
-The system is built using **Domain-Driven Design (DDD)** and **Hexagonal Architecture** principles, focusing on creating a clean, scalable, and maintainable codebase where the business logic is decoupled from infrastructure concerns.
+**SentinelPay** is a high-performance backend engine designed to evaluate banking transactions in real-time, detect potentially fraudulent activity, and manage fraud incidents using a rule-based risk scoring system.
 
-## ✨ Core Principles
+---
 
-- **Domain-Centric**: The core of the application is the domain model, which represents the business processes and rules in a pure, technology-agnostic way.
-- **Ports & Adapters (Hexagonal Architecture)**: The application communicates with the outside world (like web controllers, databases, message queues) through ports (interfaces) and adapters (implementations), keeping the core domain isolated.
-- **Scalability & Maintainability**: By separating concerns, the system is easier to test, maintain, and evolve over time.
+## 🚀 Key Value Proposition
 
-## 🏛️ Architectural Overview
+In the modern financial landscape, speed and security are paramount. SentinelPay solves the "trust gap" by providing:
+- **Real-Time Evaluation**: Instant risk scoring for every transaction.
+- **Adaptive Risk Engine**: Dynamic rules that catch everything from "Impossible Travel" to "Velocity Spikes".
+- **Incident Lifecycle Management**: A full workflow for analysts to review, escalate, and resolve suspicious activities.
+- **Developer-First API**: Seamless integration for any banking or e-commerce platform.
 
-The project is structured to reflect the Hexagonal Architecture and DDD principles:
+---
 
-- `src/main/java/com/github/sentinel/pay/domain`: **The Domain Layer**
-  - This is the heart of the application. It contains the business logic, entities, aggregates, value objects, domain events, and repository interfaces. It has no dependencies on any other layer.
+## 🏛️ Architectural Excellence
 
-- `src/main/java/com/github/sentinel/pay/application`: **The Application Layer**
-  - This layer orchestrates the domain logic. It contains use cases (Application Services) that are called by external clients (like web controllers). It acts as a bridge between the outside world and the domain.
+This project isn't just about *what* it does, but *how* it's built. It serves as a reference implementation for **Clean Architecture**:
 
-- `src/main/java/com/github/sentinel/pay/infrastructure`: **The Infrastructure Layer**
-  - This layer contains the concrete implementations of the interfaces defined in the domain layer (e.g., repository implementations using a specific database). It also holds all external-facing components like REST controllers, message listeners, and configuration.
+### 1. Domain-Driven Design (DDD)
+The core business logic is isolated in a pure `domain` layer, free from framework dependencies.
+- **Aggregates**: `Transaction`, `FraudIncident`, `AccountRiskProfile`.
+- **Value Objects**: `Money`, `RiskScore`, `Location`.
+- **Domain Services**: Orchestrating complex fraud rules across multiple entities.
 
-## 🚀 Getting Started
+### 2. Hexagonal Architecture (Ports & Adapters)
+Complete decoupling of business rules from infrastructure:
+- **Inbound Ports**: Web Controllers, REST APIs.
+- **Outbound Ports**: JPA Repositories, Notification Services.
+- **Result**: The system is 100% testable without a database or web server.
 
-This project is built using Java and Gradle.
+---
+
+## 🛠️ Tech Stack & Patterns
+
+- **Backend**: Java 17, Spring Boot 3, Spring Security (OAuth2/JWT ready).
+- **Frontend**: Thymeleaf + **HTMX** (for a reactive, SPA-like experience without complex JS frameworks).
+- **Persistence**: Spring Data JPA with H2/PostgreSQL compatibility.
+- **Testing**: JUnit 5, Mockito, AssertJ (focus on Domain-first testing).
+- **UI/UX**: Bootstrap 5 + Custom CSS (Modern "Cyber-Security" Aesthetic).
+
+---
+
+## 🎮 Interactive Demo Scenarios
+
+Once you run the application, navigate to the **Transaction Console** to test these built-in scenarios:
+
+| Scenario | Description | Target Detection |
+| :--- | :--- | :--- |
+| **Normal** | A standard $125 purchase in the home city. | ✅ Approved |
+| **High Amount** | A sudden $9,500 transfer. | ⚠️ Flags for Review |
+| **Impossible Travel** | A TX in Paris followed by one in NY 5 mins later. | 🚫 Auto-Rejected |
+| **Velocity Spike** | 10 small transactions in under 2 minutes. | 🛡️ Account Restricted |
+
+---
+
+## ⚙️ Getting Started
 
 ### Prerequisites
+- **JDK 17** or higher
+- **Gradle 8.x**
 
-- Java 17 or higher
-- Gradle
-
-### Build
-
-To build the project and run all tests, execute the following command:
-
-```bash
-./gradlew build
-```
-
-### Run the Application
-
-To run the application locally, use the Spring Boot Gradle plugin:
-
+### Run Locally
 ```bash
 ./gradlew bootRun
 ```
+Access the dashboard at: `http://localhost:8080` (Default credentials: `admin@sentinelpay.com` / `admin123`)
 
 ### Run Tests
-
-To run the unit and integration tests, execute:
-
 ```bash
 ./gradlew test
 ```
 
-## 🤝 Contributing
+---
 
-Contributions are welcome! If you'd like to contribute, please follow these steps:
+## 📈 Future Roadmap
+- [ ] **ML Integration**: Hybrid rule-based + Machine Learning scoring.
+- [ ] **Kafka Streams**: Processing transactions from a real-time message bus.
+- [ ] **Dashboard Analytics**: Real-time charts using Chart.js for incident trends.
 
-1.  Fork the repository.
-2.  Create a new branch (`git checkout -b feature/your-feature-name`).
-3.  Make your changes and commit them (`git commit -m 'Add some feature'`).
-4.  Push to the branch (`git push origin feature/your-feature-name`).
-5.  Create a new Pull Request.
+---
 
 ## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+---
+*Built with ❤️ for the Fintech community.*

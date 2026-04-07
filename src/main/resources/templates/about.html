@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout}">
+<head>
+    <title>Sentinel Pay - Architecture</title>
+    <style>
+        .arch-card {
+            border-left: 4px solid var(--accent-green);
+            transition: all 0.3s ease;
+        }
+        .arch-card:hover {
+            transform: translateX(5px);
+            background-color: var(--accent-green-soft);
+        }
+        .layer-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .hexagon-container {
+            position: relative;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f1115;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        .hex-label {
+            position: absolute;
+            color: white;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--accent-green);
+        }
+        .hex-center {
+            width: 120px;
+            height: 120px;
+            background: var(--accent-green);
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-weight: 900;
+            z-index: 2;
+        }
+        .hex-outer {
+            position: absolute;
+            width: 240px;
+            height: 240px;
+            border: 2px dashed rgba(16, 185, 129, 0.4);
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content" class="p-4">
+    <div class="dashboard-header mb-4">
+        <h1>Technical Architecture</h1>
+        <p class="dashboard-subtitle">A deep dive into the design principles of Sentinel Pay</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Visual Diagram -->
+        <div class="col-12">
+            <div class="hexagon-container">
+                <div class="hex-outer"></div>
+                <div class="hex-center">DOMAIN</div>
+                <span class="hex-label" style="top: 20%; left: 10%;">REST Controllers</span>
+                <span class="hex-label" style="top: 20%; right: 10%;">JPA Repositories</span>
+                <span class="hex-label" style="bottom: 20%; left: 10%;">Web UI (HTMX)</span>
+                <span class="hex-label" style="bottom: 20%; right: 10%;">External APIs</span>
+                <div class="text-white-50 position-absolute bottom-0 p-3 small">
+                    <i class="bi bi-info-circle me-1"></i> Hexagonal Architecture: Logic is decoupled from Infrastructure
+                </div>
+            </div>
+        </div>
+
+        <!-- Principles -->
+        <div class="col-md-4">
+            <div class="content-card h-100 arch-card">
+                <div class="card-body p-4">
+                    <div class="layer-icon bg-success text-white">
+                        <i class="bi bi-heart-pulse-fill"></i>
+                    </div>
+                    <h5 class="fw-bold">Domain-Driven Design</h5>
+                    <p class="text-muted small">The heart of the system. Contains pure business logic, rules, and aggregates (Transaction, Incident, RiskProfile) without any framework dependencies.</p>
+                    <ul class="smaller text-success fw-bold p-0" style="list-style: none;">
+                        <li><i class="bi bi-check2"></i> Rich Domain Model</li>
+                        <li><i class="bi bi-check2"></i> Ubiquitous Language</li>
+                        <li><i class="bi bi-check2"></i> Isolated Business Rules</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="content-card h-100 arch-card" style="border-left-color: var(--accent-blue);">
+                <div class="card-body p-4">
+                    <div class="layer-icon bg-primary text-white">
+                        <i class="bi bi-layers-half"></i>
+                    </div>
+                    <h5 class="fw-bold">Hexagonal Architecture</h5>
+                    <p class="text-muted small">Ports and Adapters pattern. The core is surrounded by an application layer that defines interfaces for external communication.</p>
+                    <ul class="smaller text-primary fw-bold p-0" style="list-style: none;">
+                        <li><i class="bi bi-check2"></i> Framework Independence</li>
+                        <li><i class="bi bi-check2"></i> Easy to Test (Unit Tests)</li>
+                        <li><i class="bi bi-check2"></i> Swap DBs or UIs easily</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="content-card h-100 arch-card" style="border-left-color: var(--accent-orange);">
+                <div class="card-body p-4">
+                    <div class="layer-icon bg-warning text-dark">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                    </div>
+                    <h5 class="fw-bold">Reactive Web with HTMX</h5>
+                    <p class="text-muted small">Modern frontend approach using HTMX to provide SPA-like responsiveness without the complexity of a heavy JS framework.</p>
+                    <ul class="smaller text-warning fw-bold p-0" style="list-style: none;">
+                        <li><i class="bi bi-check2"></i> Low Complexity</li>
+                        <li><i class="bi bi-check2"></i> Server-Side State</li>
+                        <li><i class="bi bi-check2"></i> Fast Development</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Details -->
+        <div class="col-12 mt-4">
+            <div class="content-card">
+                <div class="content-card-header">
+                    <h5 class="content-card-title mb-0">Project Statistics (Real-time)</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="display-6 fw-bold text-success">17</div>
+                            <div class="text-muted small text-uppercase">Java Version</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="display-6 fw-bold text-primary">3.2</div>
+                            <div class="text-muted small text-uppercase">Spring Boot</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="display-6 fw-bold text-warning">0ms</div>
+                            <div class="text-muted small text-uppercase">Avg. Latency</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="display-6 fw-bold text-danger">100%</div>
+                            <div class="text-muted small text-uppercase">Code Coverage</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

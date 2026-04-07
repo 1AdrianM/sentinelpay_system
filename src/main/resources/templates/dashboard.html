@@ -13,9 +13,53 @@
 <div layout:fragment="content">
     <div class="container-fluid px-4">
         <!-- Header -->
-        <header class="dashboard-header">
-            <h1>Sentinel Pay Dashboard</h1>
-            <p class="dashboard-subtitle">Real-time fraud detection and monitoring system</p>
+        <header class="dashboard-header d-flex justify-content-between align-items-end flex-wrap gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="status-indicator status-online"></span>
+                    <span class="text-uppercase fw-bold small text-muted" style="letter-spacing: 0.05em;" 
+                          th:text="${'System ' + dashboard.systemStatus.status}">System Live</span>
+                </div>
+                <h1>Sentinel Pay Dashboard</h1>
+                <p class="dashboard-subtitle">Real-time fraud detection and monitoring system</p>
+                
+                <!-- Dynamic System Metrics -->
+                <div class="d-flex gap-4 mt-2 animate__animated animate__fadeIn">
+                    <div class="small">
+                        <i class="bi bi-clock-history text-muted me-1"></i>
+                        <span class="text-muted">Uptime:</span>
+                        <span class="fw-bold text-success" th:text="${dashboard.systemStatus.uptimeSeconds + 's'}">0s</span>
+                    </div>
+                    <div class="small">
+                        <i class="bi bi-shield-check text-muted me-1"></i>
+                        <span class="text-muted">Active Rules:</span>
+                        <span class="fw-bold text-primary" th:text="${dashboard.systemStatus.activeRules}">0</span>
+                    </div>
+                    <div class="small">
+                        <i class="bi bi-git text-muted me-1"></i>
+                        <span class="text-muted">Version:</span>
+                        <span class="fw-bold text-dark" th:text="${dashboard.systemStatus.version}">1.0.0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2 flex-wrap mb-2">
+                <div class="tech-badge" title="Java 17 OpenJDK">
+                    <i class="bi bi-cup-hot-fill text-orange"></i> Java 17
+                </div>
+                <div class="tech-badge" title="Spring Boot 3.2">
+                    <i class="bi bi-leaf-fill text-success"></i> Spring 3.2
+                </div>
+                <div class="tech-badge" title="Hexagonal Architecture">
+                    <i class="bi bi-hexagon-fill text-primary"></i> Hexagonal
+                </div>
+                <div class="tech-badge" title="DDD Patterns">
+                    <i class="bi bi-box-seam-fill text-purple"></i> DDD
+                </div>
+                <div class="tech-badge" title="HTMX Reactive UI">
+                    <i class="bi bi-lightning-fill text-warning"></i> HTMX
+                </div>
+            </div>
         </header>
 
         <!-- KPI Cards Row -->
@@ -81,6 +125,50 @@
                     <span class="kpi-trend up">
                     <i class="bi bi-arrow-up"></i> High risk tier
                 </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Demo Simulation Panel -->
+        <div class="simulation-panel shadow-lg">
+            <h3><i class="bi bi-play-circle-fill text-success"></i> Interactive Demo Simulations</h3>
+            <p class="small text-white-50 mb-3">Quickly test the risk engine by simulating common fraud patterns. These will redirect you to the console with pre-filled data.</p>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <a href="/console?profile=NORMAL" class="text-decoration-none">
+                        <div class="simulation-card">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <div class="fw-bold text-white small">Normal Activity</div>
+                            <div class="text-white-50 smaller mt-1">Legitimate transaction from home city</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="/console?profile=HIGH_RISK" class="text-decoration-none">
+                        <div class="simulation-card">
+                            <i class="bi bi-cash-stack text-warning"></i>
+                            <div class="fw-bold text-white small">High Amount Anomaly</div>
+                            <div class="text-white-50 smaller mt-1">Sudden spike in transaction value</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="/console?profile=INTERNATIONAL" class="text-decoration-none">
+                        <div class="simulation-card">
+                            <i class="bi bi-globe-americas text-primary"></i>
+                            <div class="fw-bold text-white small">Impossible Travel</div>
+                            <div class="text-white-50 smaller mt-1">Transactions from conflicting locations</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="/console?profile=RAPID_FIRE" class="text-decoration-none">
+                        <div class="simulation-card">
+                            <i class="bi bi-lightning-charge-fill text-danger"></i>
+                            <div class="fw-bold text-white small">Velocity Attack</div>
+                            <div class="text-white-50 smaller mt-1">High frequency card testing pattern</div>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>

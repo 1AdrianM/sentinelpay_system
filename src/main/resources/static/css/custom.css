@@ -89,7 +89,7 @@
 }
 :root {
     --sidebar-bg: #0f1115;
-    --main-bg: #f8fafc;
+    --main-bg: #f3f4f6;
     --accent-green: #10b981;
     --accent-green-soft: rgba(16, 185, 129, 0.1);
     --accent-red: #f43f5e;
@@ -98,10 +98,12 @@
     --accent-yellow-soft: rgba(251, 191, 36, 0.1);
     --accent-orange: #fb923c;
     --accent-orange-soft: rgba(251, 146, 60, 0.1);
+    --accent-blue: #3b82f6;
+    --accent-blue-soft: rgba(59, 130, 246, 0.1);
     --card-bg: #ffffff;
     --text-main: #111827;
     --text-muted: #6b7280;
-    --border-color: #f1f5f9;
+    --border-color: #e5e7eb;
     --sidebar-hover: #1f2937;
     --primary: #000000;
 }
@@ -109,11 +111,99 @@
 * {
     font-family: 'Inter', sans-serif;
 }
+
 body {
     background-color: var(--main-bg);
     color: var(--text-main);
     margin: 0;
 }
+
+/* Status Pulse Animation */
+@keyframes pulse-green {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.status-online {
+    background-color: var(--accent-green);
+    animation: pulse-green 2s infinite;
+}
+
+/* Tech Stack Badges */
+.tech-badge {
+    background: white;
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-main);
+    transition: all 0.2s;
+}
+
+.tech-badge:hover {
+    border-color: var(--accent-green);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.tech-badge i {
+    font-size: 1rem;
+}
+
+/* Glassmorphism for Simulation Panel */
+.simulation-panel {
+    background: linear-gradient(135deg, #0f1115 0%, #1e293b 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.simulation-panel h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.simulation-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 1rem;
+    height: 100%;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.simulation-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-green);
+}
+
+.simulation-card i {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+/* Layout adjustments */
 .dashboard-container {
     display: flex;
     min-height: 100vh;

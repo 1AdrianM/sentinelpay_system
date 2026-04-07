@@ -15,5 +15,6 @@ public class DashBoardDto {
       public   List<IncidentResponseDto> openFraudDtoList;
       public    List<RiskProfileDto> toFiveRiskProfileDtoList;
       public     List<FraudDecisionDto> latestFraudDecisionList;
+      public SystemStatusDto systemStatus;
 
 }

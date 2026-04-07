@@ -1,10 +1,12 @@
 package com.github.sentinel.pay.application.implementation.interactors;
 
 import com.github.sentinel.pay.application.dto.dashboard.DashBoardDto;
+import com.github.sentinel.pay.application.dto.dashboard.SystemStatusDto;
 import com.github.sentinel.pay.application.dto.decision.FraudDecisionDto;
 import com.github.sentinel.pay.application.dto.incidents.IncidentResponseDto;
 import com.github.sentinel.pay.application.dto.riskProfile.RiskProfileDto;
 import com.github.sentinel.pay.application.usecases.GetDashBoardDataUseCase;
+import com.github.sentinel.pay.application.usecases.GetSystemStatusUseCase;
 import com.github.sentinel.pay.domain.entity.shared.ClientAccountId;
 import com.github.sentinel.pay.domain.repository.FraudDecisionRepository;
 import com.github.sentinel.pay.domain.repository.FraudIncidentRepository;
@@ -27,6 +29,8 @@ public class GetDashBoardDataInteractor implements GetDashBoardDataUseCase {
     private final TransactionRepository transactionRepository;
     private final RiskProfileRepository riskProfileRepository;
     private final FraudDecisionRepository fraudDecisionRepository;
+    private final GetSystemStatusUseCase getSystemStatusUseCase;
+
     @Override
     public DashBoardDto execute() {
 
@@ -59,9 +63,11 @@ public class GetDashBoardDataInteractor implements GetDashBoardDataUseCase {
                         
          List<IncidentResponseDto> incidentList= getIncidentList(clientAccountId);
 
+         SystemStatusDto systemStatus = getSystemStatusUseCase.execute();
+
          logger.atInfo().log("Assembling dashboard data transfer object for client account ID: {}", clientAccountId);
        
-         return buildResponse(totalOfTransactionThisDay, confirmedFraudCount, openIncidentTotal, highAndRestrictedCount, riskProfileList, decisionList, incidentList);
+         return buildResponse(totalOfTransactionThisDay, confirmedFraudCount, openIncidentTotal, highAndRestrictedCount, riskProfileList, decisionList, incidentList, systemStatus);
     }
 
 
@@ -102,7 +108,7 @@ private List<FraudDecisionDto> getDecisionList(ClientAccountId clientAccountId){
                 .toList();
     }
 
-private DashBoardDto  buildResponse(int totalOfTransactionThisDay, int confirmedFraudCount, int openIncidentTotal, int highAndRestrictedCount, List<RiskProfileDto> riskProfileList, List<FraudDecisionDto> decisionList, List<IncidentResponseDto> incidentList){
+private DashBoardDto  buildResponse(int totalOfTransactionThisDay, int confirmedFraudCount, int openIncidentTotal, int highAndRestrictedCount, List<RiskProfileDto> riskProfileList, List<FraudDecisionDto> decisionList, List<IncidentResponseDto> incidentList, SystemStatusDto systemStatus){
        
        return DashBoardDto.builder()
                 .totalTxPerDay(totalOfTransactionThisDay)//ready
@@ -112,6 +118,7 @@ private DashBoardDto  buildResponse(int totalOfTransactionThisDay, int confirmed
                 .toFiveRiskProfileDtoList(riskProfileList)//ready just need conversion
                 .latestFraudDecisionList(decisionList)// ready
                 .openFraudDtoList(incidentList)//ready needs conversion
+                .systemStatus(systemStatus)
                 .build();
 }
 }
