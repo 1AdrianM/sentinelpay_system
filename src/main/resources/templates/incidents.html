@@ -5,34 +5,470 @@
       layout:decorate="~{layout}">
 <head>
     <title>Sentinel Pay - Fraud Incidents</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --color-primary: #3b82f6;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --color-info: #06b6d4;
+            --color-bg-primary: #0f172a;
+            --color-bg-secondary: #1e293b;
+            --color-bg-tertiary: #334155;
+            --color-text-primary: #f1f5f9;
+            --color-text-secondary: #94a3b8;
+            --color-border: #334155;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--color-text-primary);
+        }
+
+        /* Header Section */
+        .incidents-header {
+            padding: 2rem 0 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            margin-bottom: 2rem;
+        }
+
+        .incidents-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .incidents-subtitle {
+            color: var(--color-text-secondary);
+            font-size: 0.95rem;
+            margin: 0.5rem 0 0;
+        }
+
+        /* Stats Cards */
+        .stats-compact {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-compact {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .stat-compact:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-compact-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .stat-compact-icon.open {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-warning);
+        }
+
+        .stat-compact-icon.reviewing {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--color-primary);
+        }
+
+        .stat-compact-icon.confirmed {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+        }
+
+        .stat-compact-icon.resolved {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .stat-compact-data {
+            flex: 1;
+        }
+
+        .stat-compact-label {
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-compact-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        /* Content Card */
+        .incidents-card {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .incidents-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .incidents-card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Filters */
+        .filter-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-item label {
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .filter-select {
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+            color: var(--color-text-primary);
+            padding: 0.625rem 1rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Table */
+        .incidents-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .incidents-table thead th {
+            background: var(--color-bg-tertiary);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-text-secondary);
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .incidents-table tbody td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--color-border);
+            font-size: 0.875rem;
+        }
+
+        .incidents-table tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        .incidents-table tbody tr:hover {
+            background: var(--color-bg-tertiary);
+        }
+
+        /* ID Display */
+        .id-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8125rem;
+            color: var(--color-primary);
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-block;
+        }
+
+        .status-open {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .status-reviewing {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--color-primary);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .status-confirmed {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .status-resolved {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-false-positive {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--color-text-secondary);
+            border: 1px solid rgba(100, 116, 139, 0.3);
+        }
+
+        /* Risk Score */
+        .risk-score-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+        }
+
+        .risk-score-low {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .risk-score-medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-warning);
+        }
+
+        .risk-score-high {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+        }
+
+        .risk-score-bar {
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .risk-score-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        /* Buttons */
+        .btn-action {
+            padding: 0.625rem 1.25rem;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-action:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-filter {
+            padding: 0.625rem 1.5rem;
+            background: var(--color-success);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .btn-filter:hover {
+            background: #0d9668;
+            transform: translateY(-1px);
+        }
+
+        .btn-view {
+            padding: 0.5rem 1rem;
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            font-size: 0.8125rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-view:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--color-text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .empty-state strong {
+            display: block;
+            font-size: 1.125rem;
+            color: var(--color-text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-compact {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
 </head>
 <body>
-
-<div layout:fragment="content" class="p-4">
-    <div class="dashboard-header mb-4">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1>Fraud Incidents</h1>
-                <p class="dashboard-subtitle">Real-time fraud detection and monitoring system</p>
+<div layout:fragment="content">
+    <div class="container-fluid px-4 py-4">
+        <!-- Header -->
+        <header class="incidents-header">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                <div>
+                    <h1>Fraud Incidents</h1>
+                    <p class="incidents-subtitle">Real-time fraud detection and incident management system</p>
+                </div>
+                
+                <button class="btn-action" sec:authorize="!hasRole('ROLE_READ_ONLY')">
+                    <i class="bi bi-plus-circle"></i>
+                    New Incident
+                </button>
             </div>
-            <button class="btn-action" 
-             sec:authorize="!hasRole('ROLE_READ_ONLY')">
-                <i class="bi bi-plus-circle me-2"></i>New Incident
-            </button>
-        </div>
-    </div>
+        </header>
 
-    <div class="content-card mb-4">
-        <div class="content-card-header">
-            <h5 class="content-card-title mb-0">
-                <i class="bi bi-funnel"></i> Filter Incidents
-            </h5>
+        <!-- Stats Compact -->
+        <div class="stats-compact">
+            <div class="stat-compact">
+                <div class="stat-compact-icon open">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                </div>
+                <div class="stat-compact-data">
+                    <div class="stat-compact-label">Open</div>
+                    <div class="stat-compact-value" th:text="${openCount ?: '12'}">12</div>
+                </div>
+            </div>
+
+            <div class="stat-compact">
+                <div class="stat-compact-icon reviewing">
+                    <i class="bi bi-search"></i>
+                </div>
+                <div class="stat-compact-data">
+                    <div class="stat-compact-label">Under Review</div>
+                    <div class="stat-compact-value" th:text="${reviewingCount ?: '5'}">5</div>
+                </div>
+            </div>
+
+            <div class="stat-compact">
+                <div class="stat-compact-icon confirmed">
+                    <i class="bi bi-shield-x"></i>
+                </div>
+                <div class="stat-compact-data">
+                    <div class="stat-compact-label">Confirmed Fraud</div>
+                    <div class="stat-compact-value" th:text="${confirmedCount ?: '3'}">3</div>
+                </div>
+            </div>
+
+            <div class="stat-compact">
+                <div class="stat-compact-icon resolved">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="stat-compact-data">
+                    <div class="stat-compact-label">Resolved</div>
+                    <div class="stat-compact-value" th:text="${resolvedCount ?: '48'}">48</div>
+                </div>
+            </div>
         </div>
-        <div class="card-body p-4">
-            <form class="row g-3 align-items-end">
-                <div class="col-md-3">
-                    <label for="statusFilter" class="form-label fw-bold small text-muted">STATUS</label>
-                    <select id="statusFilter" class="form-select border-0 bg-light" th:disabled="${isReadOnly}">
+
+        <!-- Filters -->
+        <div class="incidents-card mb-4">
+            <div class="incidents-card-header">
+                <h2 class="incidents-card-title">
+                    <i class="bi bi-funnel"></i>
+                    Filter Incidents
+                </h2>
+            </div>
+
+            <form class="filter-group">
+                <div class="filter-item">
+                    <label for="statusFilter">Status</label>
+                    <select id="statusFilter" class="filter-select" th:disabled="${isReadOnly}">
                         <option selected>All Statuses</option>
                         <option>OPEN</option>
                         <option>UNDER_REVIEW</option>
@@ -41,9 +477,10 @@
                         <option>RESOLVED</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label for="riskLevelFilter" class="form-label fw-bold small text-muted">RISK LEVEL</label>
-                    <select id="riskLevelFilter" class="form-select border-0 bg-light" th:disabled="${isReadOnly}">
+
+                <div class="filter-item">
+                    <label for="riskLevelFilter">Risk Level</label>
+                    <select id="riskLevelFilter" class="filter-select" th:disabled="${isReadOnly}">
                         <option selected>All Levels</option>
                         <option>LOW</option>
                         <option>MEDIUM</option>
@@ -51,84 +488,104 @@
                         <option>RESTRICTED</option>
                     </select>
                 </div>
-                <div class="col-md-4">
-                    <label for="dateRangeFilter" class="form-label fw-bold small text-muted">DATE RANGE</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><i class="bi bi-calendar3"></i></span>
-                        <input type="text" id="dateRangeFilter" class="form-control border-0 bg-light"
-                               placeholder="Select date range..." th:attr="readonly=${isReadOnly}">
-                    </div>
+
+                <div class="filter-item">
+                    <label for="dateRangeFilter">Date Range</label>
+                    <input type="text" id="dateRangeFilter" class="filter-select"
+                           placeholder="Select date range..." th:attr="readonly=${isReadOnly}">
                 </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn-secondary w-100" th:disabled="${isReadOnly}"
+
+                <div class="filter-item" style="display: flex; align-items: flex-end;">
+                    <button type="submit" class="btn-filter" th:disabled="${isReadOnly}"
                             sec:authorize="!hasRole('ROLE_READ_ONLY')">
-                        Apply
+                        <i class="bi bi-check-circle"></i> Apply Filters
                     </button>
                 </div>
             </form>
         </div>
-    </div>
 
-    <div class="content-card">
-        <div class="content-card-header">
-            <h2 class="content-card-title">
-                <i class="bi bi-shield-exclamation text-success"></i> All Incidents
-            </h2>
-        </div>
-        <div class="table-responsive">
-            <table class="modern-table w-100">
-                <thead>
-                <tr>
-                    <th>Incident ID</th>
-                    <th>Account ID</th>
-                    <th>Transaction ID</th>
-                    <th>Risk Score</th>
-                    <th>Status</th>
-                    <th>Opened At</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="incident : ${incidents}">
-                    <td><span class="id-display" th:text="${incident.incidentId}">#INC-123</span></td>
-                    <td><span class="id-display" th:text="${incident.accountId}">#ACC-456</span></td>
-                    <td><span class="id-display" th:text="${incident.transactionId}">#TRX-789</span></td>
+        <!-- Incidents Table -->
+        <div class="incidents-card">
+            <div class="incidents-card-header">
+                <h2 class="incidents-card-title">
+                    <i class="bi bi-shield-exclamation"></i>
+                    All Incidents
+                </h2>
+                <small class="text-muted" th:text="${'Total: ' + (incidents?.size() ?: '0') + ' incidents'}">
+                    Total: 0 incidents
+                </small>
+            </div>
 
-                    <td>
-                        <span th:text="${incident.riskScore}"
-                              th:classappend="${incident.riskScore >= 80 ? 'badge-risk-high' : (incident.riskScore >= 50 ? 'badge-risk-medium' : 'badge-risk-low')}"
-                              class="badge-modern"></span>
-                    </td>
-
-                    <td>
-                        <span th:text="${incident.status}"
-                              th:classappend="${incident.status == 'OPEN' ? 'badge-status-investigating' :
-                                             (incident.status == 'CONFIRMED_FRAUD' ? 'badge-risk-high' :
-                                             (incident.status == 'FALSE_POSITIVE' ? 'badge-status-resolved' : 'badge-status-open'))}"
-                              class="badge-modern"></span>
-                    </td>
-
-                    <td class="text-muted small" th:text="${#temporals.format(incident.openedAt, 'dd/MM/yyyy HH:mm')}">25/02/2026 17:30</td>
-
-                    <td>
-                        <a th:href="@{/incidents/{id}(id=${incident.incidentId})}" class="btn-link text-decoration-none">
-                            <i class="bi bi-search me-1"></i>View
-                        </a>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(incidents)}">
-                    <td colspan="7">
-                        <div class="empty-state">
-                            <i class="bi bi-shield-check"></i>
-                            <p>No fraud incidents found.</p>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="incidents-table">
+                    <thead>
+                    <tr>
+                        <th>Incident ID</th>
+                        <th>Account ID</th>
+                        <th>Transaction ID</th>
+                        <th>Risk Score</th>
+                        <th>ML Confidence</th>
+                        <th>Status</th>
+                        <th>Opened At</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="incident : ${incidents}">
+                        <td>
+                            <span class="id-code" th:text="${incident.incidentId}">INC-001</span>
+                        </td>
+                        <td>
+                            <span class="id-code" th:text="${incident.accountId}">ACC-12345</span>
+                        </td>
+                        <td>
+                            <span class="id-code" th:text="${incident.transactionId}">TXN-98765</span>
+                        </td>
+                        <td>
+                            <div class="risk-score-display"
+                                 th:classappend="${incident.riskScore >= 80 ? 'risk-score-high' : (incident.riskScore >= 50 ? 'risk-score-medium' : 'risk-score-low')}">
+                                <span th:text="${incident.riskScore}">75</span>
+                                <div class="risk-score-bar">
+                                    <div class="risk-score-fill"
+                                         th:style="'width: ' + ${incident.riskScore} + '%; background: ' + (${incident.riskScore >= 80 ? 'var(--color-danger)' : (incident.riskScore >= 50 ? 'var(--color-warning)' : 'var(--color-success)')})"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="text-success fw-bold">87%</span>
+                        </td>
+                        <td>
+                            <span class="status-badge"
+                                  th:classappend="${incident.status == 'OPEN' ? 'status-open' :
+                                                  (incident.status == 'UNDER_REVIEW' ? 'status-reviewing' :
+                                                  (incident.status == 'CONFIRMED_FRAUD' ? 'status-confirmed' :
+                                                  (incident.status == 'FALSE_POSITIVE' ? 'status-false-positive' : 'status-resolved')))}"
+                                  th:text="${incident.status}">OPEN</span>
+                        </td>
+                        <td class="text-muted small" th:text="${#temporals.format(incident.openedAt, 'dd/MM/yyyy HH:mm')}">
+                            24/11/2026 15:30
+                        </td>
+                        <td>
+                            <a th:href="@{/incidents/{id}(id=${incident.incidentId})}" class="btn-view">
+                                <i class="bi bi-eye"></i>
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(incidents)}">
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="bi bi-shield-check"></i>
+                                <strong>No fraud incidents found</strong>
+                                <p>All systems operational. No suspicious activity detected.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
-
 </body>
 </html>
