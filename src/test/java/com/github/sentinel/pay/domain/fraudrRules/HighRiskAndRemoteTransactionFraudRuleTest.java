@@ -54,6 +54,7 @@ public class HighRiskAndRemoteTransactionFraudRuleTest {
                 CurrencyProfile.initial(),
                 VelocityProfile.initial(),
                 1, // averageRiskScore
+                0, // riskScoreSamples
                 Instant.now()
         );
         HighRiskAndRemoteTransactionFraudRule rule = new HighRiskAndRemoteTransactionFraudRule();

@@ -56,6 +56,7 @@ public class TransactionAmountFraudRuleTest {
                 CurrencyProfile.initial(),
                 VelocityProfile.initial(),
                 1, // averageRiskScore
+                0, // riskScoreSamples
                 Instant.now()
          );
          TransactionAmountFraudRule rule = new TransactionAmountFraudRule();

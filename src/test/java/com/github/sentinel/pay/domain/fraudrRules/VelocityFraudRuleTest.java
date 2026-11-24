@@ -50,6 +50,7 @@ public class VelocityFraudRuleTest {
                 CurrencyProfile.initial(),
                 VelocityProfile.initial(),
                 1, // averageRiskScore
+                0, // riskScoreSamples
                 Instant.now()
         );
         Transaction tx =  Transaction.create(

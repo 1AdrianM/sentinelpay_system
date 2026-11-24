@@ -47,6 +47,7 @@ public class UnusualLocationFraudRuleTest {
                 CurrencyProfile.initial(),
                 VelocityProfile.initial(),
                 1, // averageRiskScore
+                0, // riskScoreSamples
                 Instant.now()
         );
         UnusualLocationFraudRule  rule = new UnusualLocationFraudRule();
