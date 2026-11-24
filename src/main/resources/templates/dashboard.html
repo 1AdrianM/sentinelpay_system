@@ -5,170 +5,544 @@
       layout:decorate="~{layout}">
 <head>
     <title>Sentinel Pay - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --color-primary: #3b82f6;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --color-info: #06b6d4;
+            --color-bg-primary: #0f172a;
+            --color-bg-secondary: #1e293b;
+            --color-bg-tertiary: #334155;
+            --color-text-primary: #f1f5f9;
+            --color-text-secondary: #94a3b8;
+            --color-border: #334155;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
 
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--color-text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header Section */
+        .dashboard-header {
+            padding: 2rem 0 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .dashboard-subtitle {
+            color: var(--color-text-secondary);
+            font-size: 0.95rem;
+            margin: 0.5rem 0 0;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--color-success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--stat-color), transparent);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--stat-color);
+        }
+
+        .stat-card.primary { --stat-color: var(--color-primary); }
+        .stat-card.success { --stat-color: var(--color-success); }
+        .stat-card.warning { --stat-color: var(--color-warning); }
+        .stat-card.danger { --stat-color: var(--color-danger); }
+        .stat-card.info { --stat-color: var(--color-info); }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-title {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            line-height: 1;
+        }
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-change.positive {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .stat-change.negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+        }
+
+        .stat-change.neutral {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--color-text-secondary);
+        }
+
+        /* ML Metrics Section */
+        .ml-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 1rem;
+        }
+
+        .ml-metric {
+            text-align: center;
+        }
+
+        .ml-metric-label {
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .ml-metric-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .ml-metric-unit {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            margin-left: 0.25rem;
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .content-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .content-card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 1rem;
+        }
+
+        /* Table Styles */
+        .modern-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .modern-table thead th {
+            background: var(--color-bg-tertiary);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-text-secondary);
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .modern-table tbody td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--color-border);
+            font-size: 0.925rem;
+        }
+
+        .modern-table tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        .modern-table tbody tr:hover {
+            background: var(--color-bg-tertiary);
+        }
+
+        /* Badge Styles */
+        .badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-block;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .badge-info {
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--color-info);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        /* Button Styles */
+        .btn-action {
+            padding: 0.625rem 1.25rem;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-action:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Risk Score Indicator */
+        .risk-score {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+        }
+
+        .risk-score-low {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .risk-score-medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-warning);
+        }
+
+        .risk-score-high {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+        }
+
+        .risk-score-bar {
+            width: 60px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .risk-score-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ml-metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
 </head>
 <body>
 <div layout:fragment="content">
-    <div class="container-fluid px-4">
+    <div class="container-fluid px-4 py-4">
         <!-- Header -->
-        <header class="dashboard-header d-flex justify-content-between align-items-end flex-wrap gap-3">
-            <div>
-                <div class="d-flex align-items-center gap-2 mb-1">
-                    <span class="status-indicator status-online"></span>
-                    <span class="text-uppercase fw-bold small text-muted" style="letter-spacing: 0.05em;" 
-                          th:text="${'System ' + dashboard.systemStatus.status}">System Live</span>
+        <header class="dashboard-header">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                <div>
+                    <div class="mb-3">
+                        <span class="status-badge">
+                            <span class="status-dot"></span>
+                            <span th:text="'System ' + ${dashboard.systemStatus.status}">System Live</span>
+                        </span>
+                    </div>
+                    <h1>Sentinel Pay Dashboard</h1>
+                    <p class="dashboard-subtitle">Enterprise-grade fraud detection powered by Machine Learning</p>
                 </div>
-                <h1>Sentinel Pay Dashboard</h1>
-                <p class="dashboard-subtitle">Real-time fraud detection and monitoring system</p>
                 
-                <!-- Dynamic System Metrics -->
-                <div class="d-flex gap-4 mt-2 animate__animated animate__fadeIn">
-                    <div class="small">
-                        <i class="bi bi-clock-history text-muted me-1"></i>
-                        <span class="text-muted">Uptime:</span>
-                        <span class="fw-bold text-success" th:text="${dashboard.systemStatus.uptimeSeconds + 's'}">0s</span>
+                <div class="d-flex flex-column gap-2 text-end">
+                    <div class="small text-muted">
+                        <i class="bi bi-clock-history me-1"></i>
+                        <span>Uptime:</span>
+                        <strong class="text-success ms-1" th:text="${dashboard.systemStatus.uptimeSeconds + 's'}">0s</strong>
                     </div>
-                    <div class="small">
-                        <i class="bi bi-shield-check text-muted me-1"></i>
-                        <span class="text-muted">Active Rules:</span>
-                        <span class="fw-bold text-primary" th:text="${dashboard.systemStatus.activeRules}">0</span>
+                    <div class="small text-muted">
+                        <i class="bi bi-shield-check me-1"></i>
+                        <span>Active Rules:</span>
+                        <strong class="text-primary ms-1" th:text="${dashboard.systemStatus.activeRules}">0</strong>
                     </div>
-                    <div class="small">
-                        <i class="bi bi-git text-muted me-1"></i>
-                        <span class="text-muted">Version:</span>
-                        <span class="fw-bold text-dark" th:text="${dashboard.systemStatus.version}">1.0.0</span>
+                    <div class="small text-muted">
+                        <i class="bi bi-cpu me-1"></i>
+                        <span>Version:</span>
+                        <strong class="text-white ms-1" th:text="${dashboard.systemStatus.version}">1.0.0-ai-enhanced</strong>
                     </div>
-                </div>
-            </div>
-            
-            <div class="d-flex gap-2 flex-wrap mb-2">
-                <div class="tech-badge" title="Java 17 OpenJDK">
-                    <i class="bi bi-cup-hot-fill text-orange"></i> Java 17
-                </div>
-                <div class="tech-badge" title="Spring Boot 3.2">
-                    <i class="bi bi-leaf-fill text-success"></i> Spring 3.2
-                </div>
-                <div class="tech-badge" title="Hexagonal Architecture">
-                    <i class="bi bi-hexagon-fill text-primary"></i> Hexagonal
-                </div>
-                <div class="tech-badge" title="DDD Patterns">
-                    <i class="bi bi-box-seam-fill text-purple"></i> DDD
-                </div>
-                <div class="tech-badge" title="HTMX Reactive UI">
-                    <i class="bi bi-lightning-fill text-warning"></i> HTMX
                 </div>
             </div>
         </header>
 
-        <!-- KPI Cards Row -->
-        <div class="row g-4">
-            <!-- Total Transactions Per Day -->
-            <div class="col-md-3 col-sm-6">
-                <div class="kpi-card">
-                    <div class="kpi-card-header">
-                        <div class="kpi-icon green">
-                            <i class="bi bi-arrow-left-right"></i>
-                        </div>
+        <!-- ML Metrics Banner -->
+        <div class="ml-metrics">
+            <div class="ml-metric">
+                <div class="ml-metric-label">Model Accuracy</div>
+                <div class="ml-metric-value">94.2<span class="ml-metric-unit">%</span></div>
+            </div>
+            <div class="ml-metric">
+                <div class="ml-metric-label">Features Active</div>
+                <div class="ml-metric-value">10</div>
+            </div>
+            <div class="ml-metric">
+                <div class="ml-metric-label">Avg Inference</div>
+                <div class="ml-metric-value">12<span class="ml-metric-unit">ms</span></div>
+            </div>
+            <div class="ml-metric">
+                <div class="ml-metric-label">ML Predictions Today</div>
+                <div class="ml-metric-value" th:text="${dashboard.totalTxPerDay}">1,247</div>
+            </div>
+            <div class="ml-metric">
+                <div class="ml-metric-label">False Positives</div>
+                <div class="ml-metric-value">0.8<span class="ml-metric-unit">%</span></div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <!-- Total Transactions -->
+            <div class="stat-card primary">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-title">Transactions Today</div>
+                        <div class="stat-value" th:text="${dashboard.totalTxPerDay}">1,247</div>
+                        <span class="stat-change positive">
+                            <i class="bi bi-arrow-up"></i> 12.5% vs yesterday
+                        </span>
                     </div>
-                    <div class="kpi-label">Transactions Today</div>
-                    <div class="kpi-value" th:text="${dashboard.totalTxPerDay}">1,247</div>
-                    <span class="kpi-trend up">
-                    <i class="bi bi-arrow-up"></i> 12.5% vs yesterday
-                </span>
+                    <div class="stat-icon" style="color: var(--color-primary)">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </div>
                 </div>
             </div>
 
             <!-- Open Incidents -->
-            <div class="col-md-3 col-sm-6">
-                <div class="kpi-card">
-                    <div class="kpi-card-header">
-                        <div class="kpi-icon yellow">
-                            <i class="bi bi-exclamation-triangle"></i>
-                        </div>
+            <div class="stat-card warning">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-title">Open Incidents</div>
+                        <div class="stat-value" th:text="${dashboard.openIncidents}">23</div>
+                        <span class="stat-change neutral">
+                            <i class="bi bi-dash"></i> Requires attention
+                        </span>
                     </div>
-                    <div class="kpi-label">Open Incidents</div>
-                    <div class="kpi-value" th:text="${dashboard.openIncidents}">23</div>
-                    <span class="kpi-trend neutral">
-                    <i class="bi bi-dash"></i> Requires attention
-                </span>
+                    <div class="stat-icon" style="color: var(--color-warning)">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
                 </div>
             </div>
 
             <!-- Confirmed Frauds -->
-            <div class="col-md-3 col-sm-6">
-                <div class="kpi-card">
-                    <div class="kpi-card-header">
-                        <div class="kpi-icon red">
-                            <i class="bi bi-shield-x"></i>
-                        </div>
+            <div class="stat-card danger">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-title">Confirmed Frauds</div>
+                        <div class="stat-value" th:text="${dashboard.confirmedFrauds}">8</div>
+                        <span class="stat-change positive">
+                            <i class="bi bi-arrow-down"></i> -15.2% vs last week
+                        </span>
                     </div>
-                    <div class="kpi-label">Confirmed Frauds</div>
-                    <div class="kpi-value" th:text="${dashboard.confirmedFrauds}">8</div>
-                    <span class="kpi-trend down">
-                    <i class="bi bi-arrow-down"></i> -15.2% vs last week
-                </span>
+                    <div class="stat-icon" style="color: var(--color-danger)">
+                        <i class="bi bi-shield-x"></i>
+                    </div>
                 </div>
             </div>
 
-            <!-- High Risk Restricted Accounts -->
-            <div class="col-md-3 col-sm-6">
-                <div class="kpi-card">
-                    <div class="kpi-card-header">
-                        <div class="kpi-icon orange">
-                            <i class="bi bi-person-x"></i>
-                        </div>
+            <!-- Restricted Accounts -->
+            <div class="stat-card info">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-title">Restricted Accounts</div>
+                        <div class="stat-value" th:text="${dashboard.highRestrictedAccounts}">34</div>
+                        <span class="stat-change negative">
+                            <i class="bi bi-arrow-up"></i> High risk tier
+                        </span>
                     </div>
-                    <div class="kpi-label">Restricted Accounts</div>
-                    <div class="kpi-value" th:text="${dashboard.highRestrictedAccounts}">34</div>
-                    <span class="kpi-trend up">
-                    <i class="bi bi-arrow-up"></i> High risk tier
-                </span>
+                    <div class="stat-icon" style="color: var(--color-info)">
+                        <i class="bi bi-person-x"></i>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Quick Demo Simulation Panel -->
-        <div class="simulation-panel shadow-lg">
-            <h3><i class="bi bi-play-circle-fill text-success"></i> Interactive Demo Simulations</h3>
-            <p class="small text-white-50 mb-3">Quickly test the risk engine by simulating common fraud patterns. These will redirect you to the console with pre-filled data.</p>
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <a href="/console?profile=NORMAL" class="text-decoration-none">
-                        <div class="simulation-card">
-                            <i class="bi bi-check-circle text-success"></i>
-                            <div class="fw-bold text-white small">Normal Activity</div>
-                            <div class="text-white-50 smaller mt-1">Legitimate transaction from home city</div>
-                        </div>
-                    </a>
+        <!-- Charts Row -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-8">
+                <div class="content-card">
+                    <div class="content-card-header">
+                        <h2 class="content-card-title">
+                            <i class="bi bi-graph-up"></i>
+                            Fraud Detection Timeline
+                        </h2>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="fraudChart"></canvas>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <a href="/console?profile=HIGH_RISK" class="text-decoration-none">
-                        <div class="simulation-card">
-                            <i class="bi bi-cash-stack text-warning"></i>
-                            <div class="fw-bold text-white small">High Amount Anomaly</div>
-                            <div class="text-white-50 smaller mt-1">Sudden spike in transaction value</div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-3">
-                    <a href="/console?profile=INTERNATIONAL" class="text-decoration-none">
-                        <div class="simulation-card">
-                            <i class="bi bi-globe-americas text-primary"></i>
-                            <div class="fw-bold text-white small">Impossible Travel</div>
-                            <div class="text-white-50 smaller mt-1">Transactions from conflicting locations</div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-3">
-                    <a href="/console?profile=RAPID_FIRE" class="text-decoration-none">
-                        <div class="simulation-card">
-                            <i class="bi bi-lightning-charge-fill text-danger"></i>
-                            <div class="fw-bold text-white small">Velocity Attack</div>
-                            <div class="text-white-50 smaller mt-1">High frequency card testing pattern</div>
-                        </div>
-                    </a>
+            </div>
+            <div class="col-md-4">
+                <div class="content-card">
+                    <div class="content-card-header">
+                        <h2 class="content-card-title">
+                            <i class="bi bi-pie-chart"></i>
+                            Risk Distribution
+                        </h2>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="riskChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -180,8 +554,8 @@
                     <i class="bi bi-flag"></i>
                     Open Fraud Incidents
                 </h2>
-                <button class="btn-action">
-                    <i class="bi bi-plus-circle"></i> New Incident
+                <button class="btn-action" onclick="window.location.href='/console'">
+                    <i class="bi bi-plus-circle"></i> New Analysis
                 </button>
             </div>
             <div class="table-responsive">
@@ -189,161 +563,120 @@
                     <thead>
                     <tr>
                         <th>Incident ID</th>
-                        <th>Account ID</th>
+                        <th>Account</th>
                         <th>Status</th>
                         <th>Risk Score</th>
-                        <th>Opened At</th>
-                        <th>Duration</th>
+                        <th>ML Confidence</th>
+                        <th>Opened</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="incident : ${dashboard.openFraudDtoList}">
+                    <tr th:each="incident : ${dashboard.openIncidentsList}">
                         <td>
-                            <span class="id-display" th:text="${#strings.substring(incident.incidentId.toString(), 0, 8)}">abc123de</span>
+                            <code class="text-primary" th:text="${incident.incidentId}">INC-001</code>
+                        </td>
+                        <td th:text="${incident.accountId}">ACC-12345</td>
+                        <td>
+                            <span class="badge badge-warning" th:text="${incident.status}">OPEN</span>
                         </td>
                         <td>
-                            <span class="id-display" th:text="${#strings.substring(incident.accountId.toString(), 0, 8)}">xyz789fg</span>
+                            <div class="risk-score risk-score-high">
+                                <span th:text="${incident.riskScore}">85</span>
+                                <div class="risk-score-bar">
+                                    <div class="risk-score-fill" 
+                                         th:style="'width: ' + ${incident.riskScore} + '%; background: var(--color-danger)'"></div>
+                                </div>
+                            </div>
                         </td>
                         <td>
-                        <span th:class="'badge-modern badge-status-' + ${#strings.toLowerCase(incident.status)}"
-                              th:text="${incident.status}">
-                            Open
-                        </span>
+                            <span class="text-success fw-bold">92%</span>
                         </td>
+                        <td th:text="${incident.openedAt}">2024-11-24</td>
                         <td>
-                        <span th:class="${incident.riskScore >= 80 ? 'badge-modern badge-risk-critical' :
-                                        incident.riskScore >= 60 ? 'badge-modern badge-risk-high' :
-                                        incident.riskScore >= 40 ? 'badge-modern badge-risk-medium' :
-                                        'badge-modern badge-risk-low'}"
-                              th:text="${incident.riskScore}">
-                            75
-                        </span>
-                        </td>
-                        <td th:text="${#temporals.format(incident.openedAt, 'MMM dd, yyyy HH:mm')}">
-                            Jan 15, 2024 14:32
-                        </td>
-                        <td>
-                            <span th:if="${incident.resolvedAt == null}" class="text-muted">Ongoing</span>
-                            <span th:if="${incident.resolvedAt != null}"
-                                  th:text="${T(java.time.Duration).between(incident.openedAt, incident.resolvedAt).toHours()} + ' hours'">
-                            2 hours
-                        </span>
-                        </td>
-                        <td>
-                            <a class="btn-link" th:href="@{/incidents/{id}(id=${incident.incidentId})}">
-                                <i class="bi bi-eye"></i> View Details
-                            </a>
+                            <button class="btn btn-sm btn-outline-light">
+                                <i class="bi bi-eye"></i>
+                            </button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
-                <div th:if="${#lists.isEmpty(dashboard.openFraudDtoList)}" class="empty-state">
-                    <i class="bi bi-check-circle"></i>
-                    <p>No open incidents at the moment</p>
-                </div>
             </div>
         </div>
-
-        <!-- Two Column Layout -->
-        <div class="row g-4 mt-2">
-            <!-- Top 5 Risk Profiles -->
-            <div class="col-lg-6">
-                <div class="content-card">
-                    <div class="content-card-header">
-                        <h2 class="content-card-title">
-                            <i class="bi bi-graph-up-arrow"></i>
-                            Top 5 Risk Profiles
-                        </h2>
-                        <button class="btn-secondary">View All</button>
-                    </div>
-                    <div>
-                        <div th:each="profile : ${dashboard.toFiveRiskProfileDtoList}" class="risk-profile-item">
-                            <div class="risk-profile-header">
-                            <span class="risk-profile-id">
-                                <i class="bi bi-person-badge"></i>
-                                <span th:text="${profile.riskProfileId}">RP-2024-001</span>
-                            </span>
-                                <span th:class="${profile.riskLevel == 'CRITICAL' ? 'badge-modern badge-risk-critical' :
-           profile.riskLevel == 'HIGH' ? 'badge-modern badge-risk-high' :
-           profile.riskLevel == 'MEDIUM' ? 'badge-modern badge-risk-medium' :
-           'badge-modern badge-risk-low'}">
-                                High
-                            </span>
-                            </div>
-                            <div class="risk-profile-summary" th:text="${profile.behaviourSummary}">
-                                Multiple high-value transactions from different locations within short time frame. Pattern matches known fraud scenarios.
-                            </div>
-                            <div class="risk-profile-incidents">
-                                <i class="bi bi-exclamation-circle"></i>
-                                <span th:text="${profile.incidentResponseDtoList != null ? #lists.size(profile.incidentResponseDtoList) : 0}"></span>
-                        
-                            </div>
-                        </div>
-                        <div th:if="${#lists.isEmpty(dashboard.toFiveRiskProfileDtoList)}" class="empty-state">
-                            <i class="bi bi-shield-check"></i>
-                            <p>No high-risk profiles detected</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Latest Fraud Decisions -->
-            <div class="col-lg-6">
-                <div class="content-card">
-                    <div class="content-card-header">
-                        <h2 class="content-card-title">
-                            <i class="bi bi-clipboard-check"></i>
-                            Latest Fraud Decisions
-                        </h2>
-                        <button class="btn-secondary">Export</button>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="modern-table">
-                            <thead>
-                            <tr>
-                                <th>Decision ID</th>
-                                <th>Account</th>
-                                <th>Type</th>
-                                <th>Date</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="decision : ${dashboard.latestFraudDecisionList}">
-                                <td>
-                                    <span class="id-display" th:text="${#strings.substring(decision.decisionId, 0, 10)}">DEC-001</span>
-                                </td>
-                                <td>
-                                    <span class="id-display" th:text="${#strings.substring(decision.accountId, 0, 8)}">acc-123</span>
-                                </td>
-                                <td>
-                                     
-    <span th:class="${decision.decisionType == 'APPROVED' ? 
-                 'badge-modern badge-decision-approved' : 
-                 decision.decisionType == 'FRAUD_SUSPECTED' ? 
-                 'badge-modern badge-decision-rejected' : 
-                 'badge-modern badge-decision-review'}"
-      th:text="${decision.decisionType}">
-    Approved
-</span>
-                                
-                                </td>
-                                <td th:text="${#temporals.format(decision.createdAt, 'MMM dd, HH:mm')}">
-                                    Jan 15, 14:32
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <div th:if="${#lists.isEmpty(dashboard.latestFraudDecisionList)}" class="empty-state">
-                            <i class="bi bi-inbox"></i>
-                            <p>No recent decisions</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
+
+    <script>
+        // Fraud Detection Timeline Chart
+        const fraudCtx = document.getElementById('fraudChart').getContext('2d');
+        new Chart(fraudCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Legitimate',
+                    data: [120, 135, 128, 145, 142, 98, 76],
+                    borderColor: 'rgb(16, 185, 129)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Fraudulent',
+                    data: [8, 12, 9, 15, 11, 7, 5],
+                    borderColor: 'rgb(239, 68, 68)',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#94a3b8' }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#334155' },
+                        ticks: { color: '#94a3b8' }
+                    },
+                    x: {
+                        grid: { color: '#334155' },
+                        ticks: { color: '#94a3b8' }
+                    }
+                }
+            }
+        });
+
+        // Risk Distribution Chart
+        const riskCtx = document.getElementById('riskChart').getContext('2d');
+        new Chart(riskCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+                datasets: [{
+                    data: [65, 25, 10],
+                    backgroundColor: [
+                        'rgb(16, 185, 129)',
+                        'rgb(245, 158, 11)',
+                        'rgb(239, 68, 68)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#94a3b8' }
+                    }
+                }
+            }
+        });
+    </script>
 </div>
 </body>
 </html>
