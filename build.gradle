@@ -2,12 +2,13 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.9'
 	id 'io.spring.dependency-management' version '1.1.7'
- 
+	id 'checkstyle'
+	id 'jacoco'
 }
 
 group = 'com.github'
-version = '0.0.1-SNAPSHOT'
-description = 'Demo project for Spring Boot'
+version = '1.0.0-ai-enhanced'
+description = 'SentinelPay - Fraud Detection with ML'
 
 java {
 	toolchain {
@@ -28,29 +29,77 @@ repositories {
 dependencies {
 	    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+	// Spring Boot Core
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.postgresql:postgresql:42.7.7'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	
+	// Database
+	implementation 'org.postgresql:postgresql:42.7.7'
+	
+	// Machine Learning (Smile - Java ML library with XGBoost)
+	implementation 'com.github.haifengl:smile-core:3.1.0'
+	
+	// Structured Logging (JSON)
+	implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+	
+	// Utilities
 	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
 	implementation 'com.bucket4j:bucket4j_jdk17-core:8.15.0'
-	//runtimeOnly 'com.h2database:h2'
+	
+	// Frontend
 	implementation('org.webjars.npm:htmx.org:2.0.8')
 	implementation 'org.webjars:bootstrap:5.3.2'
 	implementation 'org.webjars:jquery:3.7.1'
 	implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
-	annotationProcessor 'org.projectlombok:lombok'
+	
+	// Testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	 // Required: The SLF4J API
+	testImplementation 'com.h2database:h2'  // H2 for tests
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// JaCoCo Code Coverage
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                '**/config/**',
+                '**/dto/**',
+                '**/entity/**'
+            ])
+        }))
+    }
+}
+
+test.finalizedBy jacocoTestReport
+
+// Checkstyle
+checkstyle {
+    toolVersion = '10.12.5'
+    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+    ignoreFailures = true
+}
+
 // 1. Set the Server Port (Application Argument)
 bootRun {
     if (project.hasProperty('appPort')) {
