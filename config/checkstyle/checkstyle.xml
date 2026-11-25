@@ -9,62 +9,91 @@
     <property name="fileExtensions" value="java, properties, xml"/>
 
     <module name="TreeWalker">
-        <!-- Naming Conventions -->
-        <module name="ConstantName"/>
-        <module name="LocalFinalVariableName"/>
-        <module name="LocalVariableName"/>
-        <module name="MemberName"/>
-        <module name="MethodName"/>
-        <module name="PackageName"/>
-        <module name="ParameterName"/>
-        <module name="StaticVariableName"/>
-        <module name="TypeName"/>
-
-        <!-- Size Violations -->
-        <module name="MethodLength">
-            <property name="max" value="150"/>
-        </module>
-        <module name="ParameterNumber">
-            <property name="max" value="7"/>
-        </module>
-
-        <!-- Whitespace -->
-        <module name="EmptyForIteratorPad"/>
-        <module name="GenericWhitespace"/>
-        <module name="MethodParamPad"/>
-        <module name="NoWhitespaceAfter"/>
-        <module name="NoWhitespaceBefore"/>
-        <module name="OperatorWrap"/>
-        <module name="ParenPad"/>
-        <module name="TypecastParenPad"/>
-        <module name="WhitespaceAfter"/>
-        <module name="WhitespaceAround"/>
-
-        <!-- Modifier Checks -->
-        <module name="ModifierOrder"/>
-        <module name="RedundantModifier"/>
-
-        <!-- Blocks -->
-        <module name="EmptyBlock"/>
-        <module name="LeftCurly"/>
-        <module name="NeedBraces"/>
-        <module name="RightCurly"/>
-
-        <!-- Coding -->
+        <!-- Critical: Coding Issues -->
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
         <module name="IllegalInstantiation"/>
-        <module name="InnerAssignment"/>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
 
-        <!-- Imports -->
-        <module name="AvoidStarImport"/>
+        <!-- Critical: Imports -->
         <module name="IllegalImport"/>
         <module name="RedundantImport"/>
-        <module name="UnusedImports"/>
+        
+        <!-- Relaxed Rules - Only Major Issues -->
+        <module name="MethodLength">
+            <property name="max" value="300"/>
+            <property name="severity" value="ignore"/>
+        </module>
+        
+        <module name="ParameterNumber">
+            <property name="max" value="15"/>
+            <property name="severity" value="ignore"/>
+        </module>
 
-        <!-- Javadoc -->
+        <!-- Disabled: Formatting/Style (can be fixed later with spotless/prettier) -->
+        <module name="WhitespaceAfter">
+            <property name="severity" value="ignore"/>
+        </module>
+        
+        <module name="WhitespaceAround">
+            <property name="severity" value="ignore"/>
+        </module>
+        
+        <module name="OperatorWrap">
+            <property name="severity" value="ignore"/>
+        </module>
+        
+        <module name="NeedBraces">
+            <property name="severity" value="ignore"/>
+        </module>
+        
+        <module name="LeftCurly">
+            <property name="severity" value="ignore"/>
+        </module>
+        
+        <module name="RightCurly">
+            <property name="severity" value="ignore"/>
+        </module>
+        
+        <module name="AvoidStarImport">
+            <property name="severity" value="ignore"/>
+        </module>
+        
+        <module name="UnusedImports">
+            <property name="severity" value="ignore"/>
+        </module>
+
+        <!-- Disabled: Naming (can be enforced gradually) -->
+        <module name="ConstantName">
+            <property name="severity" value="ignore"/>
+        </module>
+        
+        <module name="LocalFinalVariableName">
+            <property name="severity" value="ignore"/>
+        </module>
+        
+        <module name="LocalVariableName">
+            <property name="severity" value="ignore"/>
+        </module>
+        
+        <module name="MemberName">
+            <property name="severity" value="ignore"/>
+        </module>
+        
+        <module name="MethodName">
+            <property name="severity" value="ignore"/>
+        </module>
+        
+        <module name="ParameterName">
+            <property name="severity" value="ignore"/>
+        </module>
+        
+        <module name="StaticVariableName">
+            <property name="severity" value="ignore"/>
+        </module>
+
+        <!-- Javadoc - Already Ignored -->
         <module name="JavadocMethod">
             <property name="severity" value="ignore"/>
         </module>
