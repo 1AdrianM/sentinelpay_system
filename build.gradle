@@ -40,6 +40,7 @@ dependencies {
 	// Database
 	implementation 'org.postgresql:postgresql:42.7.7'
 	implementation 'org.xerial:sqlite-jdbc:3.47.1.0'  // Embedded SQLite for lightweight deployment
+	implementation 'org.hibernate.orm:hibernate-community-dialects:6.4.4.Final'  // SQLite dialect support
 	
 	// Machine Learning (Smile - Java ML library with XGBoost)
 	implementation 'com.github.haifengl:smile-core:3.1.0'
