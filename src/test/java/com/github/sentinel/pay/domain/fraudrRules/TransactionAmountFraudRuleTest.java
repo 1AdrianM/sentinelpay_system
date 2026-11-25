@@ -26,9 +26,6 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TransactionAmountFraudRuleTest {

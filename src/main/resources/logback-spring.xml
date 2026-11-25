@@ -85,9 +85,15 @@
         </root>
     </springProfile>
     
-    <springProfile name="production,staging">
+    <springProfile name="production,staging,prod">
         <root level="INFO">
-            <appender-ref ref="ASYNC_JSON"/>
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+    
+    <!-- Default fallback (cloud environments) -->
+    <springProfile name="!dev,!local">
+        <root level="INFO">
             <appender-ref ref="CONSOLE"/>
         </root>
     </springProfile>

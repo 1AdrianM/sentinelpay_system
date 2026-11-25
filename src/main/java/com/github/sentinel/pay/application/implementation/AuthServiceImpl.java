@@ -31,7 +31,7 @@ public class AuthServiceImpl implements AuthService {
       if(!passwordEncoder.matches(password, user.getPasswordHash())){
           logger.atError().log("Authentication failed for user with email: {}", email);
           throw new UnauthorizedException("password doesnt match");
-      };
+      }
 
       logger.atInfo().log("Authentication successful for user with email: {}", email);
 
